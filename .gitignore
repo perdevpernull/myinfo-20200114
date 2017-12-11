@@ -1,3 +1,11 @@
+#dev files
+startdev.bat
+myinfo.code-workspace
+build
+public/myinfo.js
+public/lp_thebrain.js
+public/dp_note.js
+
 # Logs
 logs
 *.log
