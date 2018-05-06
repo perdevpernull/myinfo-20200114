@@ -5,18 +5,13 @@
   "main": "myinfoServer.js",
   "scripts": {
     "build": "run-s clean build_myinfo deploy_myinfo build_lp_thebrain deploy_lp_thebrain build_dp_note deploy_dp_note",
-
     "clean": "del build\\*.js",
-
     "build_myinfo": "rollup -c myinfo.rollup.config.js",
     "deploy_myinfo": "copy /Y build\\myinfo.js public\\myinfo.js",
-
     "build_lp_thebrain": "rollup -c lp_thebrain.rollup.config.js",
     "deploy_lp_thebrain": "copy /Y build\\lp_thebrain.js public\\lp_thebrain.js",
-
     "build_dp_note": "rollup -c dp_note.rollup.config.js",
     "deploy_dp_note": "copy /Y build\\dp_note.js public\\dp_note.js",
-
     "start": "start node myinfoServer.js"
   },
   "repository": {
@@ -28,6 +23,12 @@
     "thebrain"
   ],
   "author": "\\dev\\null",
+  "contributors": [
+    {
+      "name": "Szil",
+      "email": "nemes.gergo@protonmail.com"
+    }
+  ],
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/perdevpernull/myinfo/issues"
