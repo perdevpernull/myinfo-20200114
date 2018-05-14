@@ -32,7 +32,7 @@ class Dataset {
 					ID0: 0
 				},
 				pluginData: {}
-			}
+			};
 		} else {
 			this._data = jsonData;
 		};

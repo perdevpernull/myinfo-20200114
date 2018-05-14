@@ -5,7 +5,7 @@
 
 // ToDo: a code (pl.: layoutPlugins[key].code) helyett key-t használni.
 
-import {log, ERROR, WARNING, INFO, DEBUG} from "../common/util/log"
+import {log, ERROR, WARNING, INFO, DEBUG} from "../common/util/log";
 var undefined;
 
 var preferences = {

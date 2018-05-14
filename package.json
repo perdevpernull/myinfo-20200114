@@ -34,12 +34,13 @@
     "url": "https://github.com/perdevpernull/myinfo/issues"
   },
   "homepage": "https://github.com/perdevpernull/myinfo#readme",
-  "dependencies": {
-    "express": "^4.16.2"
-  },
   "devDependencies": {
-    "eslint": "^4.13.0",
-    "npm-run-all": "^4.1.2",
-    "rollup": "^0.52.1"
+    "babel-core": "^6.26.3",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-eslint": "^4.0.2",
+    "gulp-sourcemaps": "^2.6.4",
+    "jshint": "^2.9.5"
   }
 }
