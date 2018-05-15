@@ -1,6 +1,9 @@
 var express = require("express");
+var livereload = require('livereload');
 
-// - -- --->
+// Live reload init
+var server = livereload.createServer();
+server.watch(__dirname + '/public');
 
 var app = express();
 var listeningPort = 3000;
@@ -10,7 +13,7 @@ app.get("/api/database/:username/:dbname", function(req, res) {
 	res.end();
 });
 
-app.use(express.static("./public"));
+app.use(express.static('./public'));
 
 app.listen(listeningPort);
 

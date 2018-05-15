@@ -4,14 +4,12 @@
   "description": "MyInfo: Just another mindmap application.",
   "main": "myinfoServer.js",
   "scripts": {
-    "build": "run-s clean build_myinfo deploy_myinfo build_lp_thebrain deploy_lp_thebrain build_dp_note deploy_dp_note",
-    "clean": "del build\\*.js",
+    "build": "run-s build_myinfo build_lp_thebrain build_dp_note",
     "build_myinfo": "rollup -c myinfo.rollup.config.js",
-    "deploy_myinfo": "copy /Y build\\myinfo.js public\\myinfo.js",
     "build_lp_thebrain": "rollup -c lp_thebrain.rollup.config.js",
-    "deploy_lp_thebrain": "copy /Y build\\lp_thebrain.js public\\lp_thebrain.js",
     "build_dp_note": "rollup -c dp_note.rollup.config.js",
-    "deploy_dp_note": "copy /Y build\\dp_note.js public\\dp_note.js",
+    "watch": "rollup -c myinfo.rollup.config.js -w",
+    "dev": "npm-run-all --parallel start watch",
     "start": "start node myinfoServer.js"
   },
   "repository": {
@@ -35,11 +33,13 @@
   },
   "homepage": "https://github.com/perdevpernull/myinfo#readme",
   "dependencies": {
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "livereload": "^0.7.0"
   },
   "devDependencies": {
     "eslint": "^4.13.0",
     "npm-run-all": "^4.1.2",
-    "rollup": "^0.52.1"
+    "rollup": "^0.59.0",
+    "rollup-plugin-uglify": "^3.0.0"
   }
 }
