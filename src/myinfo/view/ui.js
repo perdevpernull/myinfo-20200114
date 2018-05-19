@@ -1,6 +1,6 @@
-import {log, ERROR, WARNING, INFO, DEBUG} from "../../common/util/log";
-import {autosize} from "../../common/util/autosize";
-import {userData} from "../model/userdata";
+import { log, ERROR, WARNING, INFO, DEBUG } from "../../common/util/log";
+import { autosize } from "../../common/util/autosize";
+import { userData } from "../model/userdata";
 var undefined;
 
 function uiInit(domID) {
@@ -26,12 +26,12 @@ function uiInit(domID) {
 	$(domID).append(str);
 
 	// Modal window: Edit
-		str = `
+	str = `
 			<div id="dataset-editor" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dataset-editorLabel" aria-hidden="true">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 id="dataset-editorLabel" class="modal-title">Edit dataset's metadata (ID_here)</h5>
+							<h5 id="dataset-editorLabel" class="modal-title"></h5>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 								<span aria-hidden="true">&times;</span>
 							</button>
@@ -51,49 +51,52 @@ function uiInit(domID) {
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-							<button id="modal-save" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+							<button id="modal-edit-save" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
 						</div>
 					</div>
 				</div>
 			</div>`;
-		$("#ws-home").append(str);
+	$("#ws-home").append(str);
 
-		autosize($("#dataset-description"));
+	autosize($("#dataset-description"));
 
-		$("#dataset-editor").on("show.bs.modal", function (event) {
-			// Button that triggered the modal
-				var button = $(event.relatedTarget);
+	$("#dataset-editor").on("show.bs.modal", function (event) {
+		// Button that triggered the modal
+		var button = $(event.relatedTarget);
 
-			// Extract info from data-* attributes
-				var key = button.data("key");
-				var title = button.data("title");
-				var description = button.data("description");
-			
-			// If necessary, we could initiate an AJAX request here (and then do the updating in a callback).
-			var modal = $(this);
-			modal.find("#dataset-editorLabel").text(`Edit dataset's metadata (${key})`);
-			$("#dataset-key").val(key);
-			$("#dataset-title").val(title);
-			$("#dataset-description").val(description);
-		});
+		// Extract info from data-* attributes
+		var key = button.data("key");
 
-		$("#dataset-editor").on("shown.bs.modal", function (event) {
-			autosize.update($("#dataset-description"));
-		});
+		var dataset = userData.getDataset(key);
+		log(DEBUG, `
+			dataset key = ${key};
+			dataset title = ${dataset.title};
+			dataset description = ${dataset.description};
+			`);
 
-		$("#modal-save").click( function() {
-			var key = $("#dataset-key").val();
-			var title = $("#dataset-title").val();
-			var description = $("#dataset-description").val();
-			// ToDo: Innen a userData-t majd száműzni kell. Ne legyen importálva.
-			var datasets = userData.getDatasets();
-			datasets[key].title = title;
-			datasets[key].description = description;
-			myinfo.refreshHome();
-		});
+		var modal = $(this);
+		modal.find("#dataset-editorLabel").text(`Edit dataset's metadata (${key})`);
+		modal.find("#dataset-key").val(key);
+		modal.find("#dataset-title").val(dataset.title);
+		modal.find("#dataset-description").val(dataset.description);
+	});
+
+	$("#dataset-editor").on("shown.bs.modal", function (event) {
+		autosize.update($("#dataset-description"));
+	});
+
+	$("#modal-edit-save").click(function () {
+		var modal = $("#dataset-editor");
+		var key = modal.find("#dataset-key").val();
+		var title = modal.find("#dataset-title").val();
+		var description = modal.find("#dataset-description").val();
+
+		myinfo.changeDatasetInfo(key, title, description);
+		myinfo.refreshHome();
+	});
 
 	// Modal window: Delete
-		str = `
+	str = `
 			<div id="dataset-delete-confirm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dataset-delete-confirmLabel" aria-hidden="true">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
@@ -113,44 +116,104 @@ function uiInit(domID) {
 					</div>
 				</div>
 			</div>`;
-		$("#ws-home").append(str);
+	$("#ws-home").append(str);
 
-		$("#dataset-delete-confirm").on("show.bs.modal", function (event) {
-			// Button that triggered the modal
-				var button = $(event.relatedTarget);
+	$("#dataset-delete-confirm").on("show.bs.modal", function (event) {
+		// Button that triggered the modal
+		var button = $(event.relatedTarget);
 
-			// Extract info from data-* attributes
-				var key = button.data("key");
-				var title = button.data("title");
-			
-			// If necessary, we could initiate an AJAX request here (and then do the updating in a callback).
-			var modal = $(this);
-			modal.find("#dataset-delete-confirmLabel").text(`Delete dataset (${key})`);
-			modal.find("#dataset-delete-confirmLabel2").text(`Are you sure you want to delete dataset: '${title}'?`);
-		});
+		// Extract info from data-* attributes
+		var key = button.data("key");
+		var title = button.data("title");
 
-		$("#modal-delete").click( function() {
-			// ToDo: Törölni az adatbázisból az adott dataset-et.
-			log(INFO, "Deleted");
-			myinfo.refreshHome();
-		});
+		// If necessary, we could initiate an AJAX request here (and then do the updating in a callback).
+		var modal = $(this);
+		modal.find("#dataset-delete-confirmLabel").text(`Delete dataset (${key})`);
+		modal.find("#dataset-delete-confirmLabel2").text(`Are you sure you want to delete dataset: '${title}'?`);
+
+		modal.data("key", key);
+	});
+
+	$("#modal-delete").click(function () {
+		var modal = $("#dataset-delete-confirm");
+		var datasetKey = modal.data("key");
+
+		myinfo.deleteDataset(datasetKey);
+		myinfo.refreshHome();
+	});
+
+	// Modal window: Creator
+	str = `
+			<div id="dataset-creator" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dataset-creator-label" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 id="dataset-creator-label" class="modal-title"></h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<form>
+								<div class="form-group">
+									<input id="dataset-key" type="text" class="form-control" hidden>
+									<label for="dataset-title" class="form-control-label">Title:</label>
+									<input id="dataset-title" type="text" class="form-control">
+								</div>
+								<div class="form-group">
+									<label for="dataset-description" class="form-control-label">Description:</label>
+									<textarea id="dataset-description" class="form-control"></textarea>
+								</div>
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+							<button id="modal-create-save" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+						</div>
+					</div>
+				</div>
+			</div>`;
+	$("#ws-home").append(str);
+
+	autosize($("#dataset-description"));
+
+	$("#dataset-creator").on("show.bs.modal", function (event) {
+		log(DEBUG, "show creator modal");
+		var modal = $(this);
+		modal.find("#dataset-creator-label").text(`Create new dataset`);
+		modal.find("#dataset-title").text("");
+		modal.find("#dataset-description").text("");
+	});
+
+	$("#dataset-creator").on("shown.bs.modal", function (event) {
+		autosize.update($("#dataset-description"));
+	});
+
+	$("#modal-create-save").click(function () {
+		log(DEBUG, "save new dataset");
+		var modal = $("#dataset-creator");
+		var title = modal.find("#dataset-title").val();
+		var description = modal.find("#dataset-description").val();
+		myinfo.createNewDataset(title, description);
+		myinfo.refreshHome();
+	});
 
 	// ToDo: ezt itt kupucolni.
-		$("#ws-home-tab").on("show.bs.pill", function (e) {
-			log(INFO, "Helló-belló!");
-			myinfo.refreshHome();
-		});
-		$("#sidebar-toggler").click( function() {
-			log(INFO, "Helló-belló2!");
-			myinfo.refreshHome();
-		});
+	$("#ws-home-tab").on("show.bs.pill", function (e) {
+		log(INFO, "Helló-belló!");
+		myinfo.refreshHome();
+	});
+	$("#sidebar-toggler").click(function () {
+		log(INFO, "Helló-belló2!");
+		myinfo.refreshHome();
+	});
 };
 
 function uiRefreshHome(datasets) {
 	var str1, str2, str3, primary, open;
 	$("#ws-home-list").empty();
 	for (var datasetKey in datasets) {
-		open = (datasets[datasetKey].open ? "invisible": "");
+		open = (datasets[datasetKey].open ? "invisible" : "");
 		str1 = `
 			<div id="dataset-${datasetKey}" class="card m-2" style="width: 18rem;">
 				<a href="#" onClick="myinfo.openDataset('${datasetKey}')">
@@ -159,7 +222,7 @@ function uiRefreshHome(datasets) {
 				<div class="card-body">
 					<div class="d-flex justify-content-between">
 						<h4 class="card-title">${datasets[datasetKey].title}</h4>
-						<button type="button" class="btn btn-light ${open}" data-toggle="modal" data-target="#dataset-editor" data-key="${datasetKey}" data-title="${datasets[datasetKey].title}" data-description="${datasets[datasetKey].description}" ${open}>Edit</button>
+						<button type="button" class="btn btn-light ${open}" data-toggle="modal" data-target="#dataset-editor" data-key="${datasetKey}" ${open}>Edit</button>
 					</div>
 					<p class="card-text">${datasets[datasetKey].description}</p>
 				</div>
@@ -192,8 +255,8 @@ function uiRefreshHome(datasets) {
 				</div>
 				<div class="card-footer bg-white">
 					<div class="d-flex justify-content-between">
-						<button type="button" class="btn btn-light" onClick="myinfo.openDataset('OpenNew')">Open new</button>
-						<button type="button" class="btn btn-light" onClick="myinfo.openDataset('CreateNew')">Create new</button>
+						<!-- <button type="button" class="btn btn-light" onClick="myinfo.openDataset('OpenNew')">Open new</button> -->
+						<button type="button" class="btn btn-light" data-toggle="modal" data-target="#dataset-creator">Create new</button>
 					</div>
 				</div>
 			</div>`;
@@ -203,8 +266,11 @@ function uiRefreshHome(datasets) {
 function uiAddMenuAndWs(datasetKey, menuTitle) {
 	var str = `
 		<li id="menu-${datasetKey}" class="nav-item">
-			<a id="ws-${datasetKey}-tab" class="nav-link" data-toggle="pill" href="#ws-${datasetKey}" role="tab">${menuTitle}</a>
-		</li-->`;
+			<a id="ws-${datasetKey}-tab" class="nav-link closable" data-toggle="pill" href="#ws-${datasetKey}" role="tab">${menuTitle}</a>
+			<button type="button" class="close" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</li>`;
 	$("#menu").append(str);
 
 	var index = $("#menu li").length - 1;
@@ -229,4 +295,4 @@ function uiDeleteMenuAndWs(datasetKey) {
 };
 
 
-export {uiInit, uiRefreshHome, uiAddMenuAndWs, uiDeleteMenuAndWs};
+export { uiInit, uiRefreshHome, uiAddMenuAndWs, uiDeleteMenuAndWs };

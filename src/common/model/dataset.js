@@ -1,10 +1,11 @@
 import {log, loginc, logdec, ERROR, WARNING, INFO, DEBUG} from "../util/log";
-var undefined;
-
 
 class Dataset {
 	constructor(jsonData) {
-		if (jsonData === undefined) {
+		loginc();
+		log(DEBUG, `Dataset.constructor(${jsonData})`);
+		if (jsonData == null) {
+			log(DEBUG, `Init default dataset`);
 			this._data = {
 				nextNodeID: 2,
 				nodes: {
@@ -32,16 +33,20 @@ class Dataset {
 					ID0: 0
 				},
 				pluginData: {}
-			}
+			};
 		} else {
 			this._data = jsonData;
 		};
+		logdec();
 	};
 
 	getJsonData() {
-
-		return JSON.stringify(this._data);
+		return this._data;
 	};
+
+	getJsonString() {
+		return JSON.stringify(this._data);
+	}
 
 	addNode(text) {
 		var nodeID = this._data.nextNodeID;

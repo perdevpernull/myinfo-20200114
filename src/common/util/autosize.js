@@ -22,7 +22,7 @@ const map = (typeof Map === "function") ? new Map() : (function () {
 				values.splice(index, 1);
 			}
 		},
-	}
+	};
 })();
 
 let createEvent = (name)=> new Event(name, {bubbles: true});
@@ -91,7 +91,7 @@ function assign(ta) {
 				arr.push({
 					node: el.parentNode,
 					scrollTop: el.parentNode.scrollTop,
-				})
+				});
 			}
 			el = el.parentNode;
 		}
@@ -121,7 +121,7 @@ function assign(ta) {
 
 		// prevents scroll-position jumping
 		overflows.forEach(el => {
-			el.node.scrollTop = el.scrollTop
+			el.node.scrollTop = el.scrollTop;
 		});
 
 		if (docTop) {

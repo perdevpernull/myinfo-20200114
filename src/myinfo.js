@@ -4,4 +4,4 @@ import {run} from "./myinfo/main";
 run("#myinfo");
 
 // MyInfo API
-export {refreshHome, openDataset, registerDataPlugin, registerLayoutPlugin} from "./myinfo/main";
+export {refreshHome, openDataset, createNewDataset, changeDatasetInfo, deleteDataset, registerDataPlugin, registerLayoutPlugin} from "./myinfo/main";
