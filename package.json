@@ -10,7 +10,7 @@
     "build_dp_note": "rollup -c dp_note.rollup.config.js",
     "watch": "rollup -c myinfo.rollup.config.js -w",
     "dev": "npm-run-all --parallel start watch",
-    "start": "start node myinfoServer.js"
+    "start": "nodemon myinfoServer.js"
   },
   "repository": {
     "type": "git",
@@ -33,11 +33,15 @@
   },
   "homepage": "https://github.com/perdevpernull/myinfo#readme",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "express": "^4.16.2",
-    "livereload": "^0.7.0"
+    "express-session": "^1.15.6",
+    "livereload": "^0.7.0",
+    "memorystore": "^1.6.0"
   },
   "devDependencies": {
     "eslint": "^4.13.0",
+    "nodemon": "^1.17.4",
     "npm-run-all": "^4.1.2",
     "rollup": "^0.59.0",
     "rollup-plugin-uglify": "^3.0.0"

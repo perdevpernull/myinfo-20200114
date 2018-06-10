@@ -5,6 +5,7 @@ build
 public/myinfo.js
 public/lp_thebrain.js
 public/dp_note.js
+database/db
 
 # Logs
 logs
