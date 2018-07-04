@@ -1,6 +1,7 @@
 import { setLogLevel, log, loginc, logdec, ERROR, WARNING, INFO, DEBUG } from "../common/util/log";
 import { loadJson } from "../common/util/loadjson";
 import { loadPlugins } from "../common/util/loadplugins";
+import { loadUserData } from "../common/util/loadRemote";
 import { settings } from "./model/settings";
 import { userData, USER_DATA_STORE_KEY } from "./model/userdata";
 import { Dataset } from "../common/model/dataset";
@@ -25,6 +26,10 @@ var run = function (domID) {
 		// ToDo: Egyelőre a default értékekkel dolgozom.
 		var emptyJson;
 		settings.init(emptyJson);
+
+		loadUserData((data) => {
+			log(DEBUG, 'data= ' + data);
+		});
 
 		var dataPlugins = settings.getDataPlugins();
 		loadPlugins(dataPlugins, function () {
