@@ -27,10 +27,6 @@ var run = function (domID) {
 		var emptyJson;
 		settings.init(emptyJson);
 
-		loadUserData((data) => {
-			log(DEBUG, 'data= ' + data);
-		});
-
 		var dataPlugins = settings.getDataPlugins();
 		loadPlugins(dataPlugins, function () {
 			log(INFO, "dataPlugins loaded");
@@ -39,20 +35,26 @@ var run = function (domID) {
 			loadPlugins(layoutPlugins, function () {
 				log(INFO, "layoutPlugins loaded");
 
-				var userdataJson = localStorage.loadJson(USER_DATA_STORE_KEY);
-				if (userdataJson === null) {
-					loadJson("userdata-ID0.json", function (json) {
-						log(INFO, "userdata-ID0.json loaded");
-						// TODO: Ezt kivenni, amikor már nincs szükség a teszt adatokra
-						localStorage.storeJson(USER_DATA_STORE_KEY, json);
-						userData.init(json);
-					});
-				} else {
-					userData.init(userdataJson);
-				}
+				// Read from remote
+				loadUserData((userdataJson) => {
+					if (userdataJson === null) {
+						// If it fails, try from localStorage
+						var localUserdataJson = localStorage.loadJson(USER_DATA_STORE_KEY);
+						if (localUserdataJson === null) {
+							loadJson("userdata-ID0.json", function (json) {
+								log(INFO, "userdata-ID0.json loaded");
+								// TODO: Ezt kivenni, amikor már nincs szükség a teszt adatokra
+								localStorage.storeJson(USER_DATA_STORE_KEY, json);
+								userData.init(json);
+							});
+						}
+					} else {
+						userData.init(userdataJson);
+					}
 
-				uiInit(mainDomID);
-				uiRefreshHome(userData.getDatasets());
+					uiInit(mainDomID);
+					uiRefreshHome(userData.getDatasets());
+				});
 			});
 		});
 	});
