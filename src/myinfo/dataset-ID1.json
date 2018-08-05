@@ -1,0 +1,153 @@
+{
+	"nextNodeID": 13,
+	"nodes": {
+		"ID0": {
+			"ID": 0,
+			"text": "Pocakpapa",
+			"links": [
+				{"toID": 2, "type": "child", "tags": [], "deleted": false},
+				{"toID": 3, "type": "child", "tags": [], "deleted": false}
+			],
+			"tags": [],
+			"deleted": false
+		},
+		"ID1": {
+			"ID": 1,
+			"text": "Zsizsó nana",
+			"links": [
+				{"toID": 2, "type": "child", "tags": [], "deleted": false},
+				{"toID": 3, "type": "child", "tags": [], "deleted": false},
+				{"toID": 11, "type": "friend", "tags": [], "deleted": false}
+			],
+			"tags": [],
+			"deleted": false
+		},
+		"ID2": {
+			"ID": 2,
+			"text": "Péter",
+			"links": [
+				{"toID": 8, "type": "child", "tags": [], "deleted": false},
+				{"toID": 9, "type": "child", "tags": [], "deleted": false},
+				{"toID": 11, "type": "friend", "tags": [], "deleted": false},
+				{"toID": 6, "type": "friend", "tags": [], "deleted": false},
+				{"toID": 0, "type": "parent", "tags": [], "deleted": false},
+				{"toID": 1, "type": "parent", "tags": [], "deleted": false}
+			],
+			"tags": [],
+			"deleted": false
+		},
+		"ID3": {
+			"ID": 3,
+			"text": "Tamás",
+			"links": [
+				{"toID": 0, "type": "parent", "tags": [], "deleted": false},
+				{"toID": 1, "type": "parent", "tags": [], "deleted": false},
+				{"toID": 12, "type": "friend", "tags": [], "deleted": false}
+			],
+			"tags": [],
+			"deleted": false
+		},
+		"ID4": {
+			"ID": 4,
+			"text": "Janipapa",
+			"links": [
+				{"toID": 6, "type": "child", "tags": [], "deleted": false},
+				{"toID": 7, "type": "child", "tags": [], "deleted": false},
+				{"toID": 10, "type": "child", "tags": [], "deleted": false}
+			],
+			"tags": [],
+			"deleted": false
+		},
+		"ID5": {
+			"ID": 5,
+			"text": "Icanana",
+			"links": [
+				{"toID": 6, "type": "child", "tags": [], "deleted": false},
+				{"toID": 7, "type": "child", "tags": [], "deleted": false}
+			],
+			"tags": [],
+			"deleted": false
+		},
+		"ID6": {
+			"ID": 6,
+			"text": "Szilvi",
+			"links": [
+				{"toID": 8, "type": "child", "tags": [], "deleted": false},
+				{"toID": 9, "type": "child", "tags": [], "deleted": false},
+				{"toID": 4, "type": "parent", "tags": [], "deleted": false},
+				{"toID": 5, "type": "parent", "tags": [], "deleted": false},
+				{"toID": 2, "type": "friend", "tags": [], "deleted": false}
+			],
+			"tags": [],
+			"deleted": false
+		},
+		"ID7": {
+			"ID": 7,
+			"text": "Oláh Jancsi (Manó)",
+			"links": [
+				{"toID": 4, "type": "parent", "tags": [], "deleted": false},
+				{"toID": 5, "type": "parent", "tags": [], "deleted": false}
+			],
+			"tags": [],
+			"deleted": false
+		},
+		"ID8": {
+			"ID": 8,
+			"text": "Ábris",
+			"links": [
+				{"toID": 2, "type": "parent", "tags": [], "deleted": false},
+				{"toID": 6, "type": "parent", "tags": [], "deleted": false}
+			],
+			"tags": [],
+			"deleted": false
+		},
+		"ID9": {
+			"ID": 9,
+			"text": "Hanka",
+			"links": [
+				{"toID": 2, "type": "parent", "tags": [], "deleted": false},
+				{"toID": 6, "type": "parent", "tags": [], "deleted": false}
+			],
+			"tags": [],
+			"deleted": false
+		},
+		"ID10": {
+			"ID": 10,
+			"text": "Zolkó",
+			"links": [
+				{"toID": 4, "type": "parent", "tags": [], "deleted": false}
+			],
+			"tags": [],
+			"deleted": false
+		},
+		"ID11": {
+			"ID": 11,
+			"text": "Zoltánom",
+			"links": [
+				{"toID": 2, "type": "friend", "tags": [], "deleted": false},
+				{"toID": 1, "type": "friend", "tags": [], "deleted": false}
+			],
+			"tags": [],
+			"deleted": false
+		},
+		"ID12": {
+			"ID": 12,
+			"text": "Tami",
+			"links": [
+				{"toID": 3, "type": "friend", "tags": [], "deleted": false}
+			],
+			"tags": [],
+			"deleted": false
+		}
+	},
+	"tags": {},
+	"rootNodes": {
+		"ID0": 0,
+		"ID1": 1,
+		"ID4": 4,
+		"ID5": 5,
+		"ID11": 11,
+		"ID12": 12
+	},
+	"pluginData": {}
+}
