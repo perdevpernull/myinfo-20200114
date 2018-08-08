@@ -6,40 +6,24 @@ import {userData} from "./model/userdata";
 import {Dataset} from "../common/model/dataset";
 import {uiInit, uiRefreshHome, uiAddMenuAndWs, uiDeleteMenuAndWs} from "./view/ui";
 
-import settings_json from "./settings.json";
-import userdata_ID0_json from "./userdata-ID0.json";
 
-import dataset_ID0_json from "./dataset-ID0.json";
-import dataset_ID1_json from "./dataset-ID1.json";
-
-
-var undefined;
-var mainDomID;
-
+var mainDomID = null;
 class MyInfo {
-	constructor() {
-		// To be removed later:
-		console.log(`To be removed later: ${dataset_ID0_json}`);
-		console.log(`To be removed later: ${dataset_ID1_json}`);
-	};
-
-	run(domID) {
+	constructor(domID) {
 		// Initial settings
-			setLogLevel(DEBUG);
+		setLogLevel(DEBUG);
 	
-		if (domID === undefined) {
+		if (domID === null) {
 			mainDomID = "#myinfo";
 		} else {
 			mainDomID = domID;
 		};
 	
-		log(INFO, `main.run(${mainDomID})`);
+		log(INFO, `main.constructor(${mainDomID})`);
 	
-		loadJson(settings_json, function(json) {
+		loadJson("/api/v1/settings", function(json) {
 			log(INFO, "settings.json loaded");
-			// ToDo: Egyelőre a default értékekkel dolgozom.
-			var emptyJson;
-			settings.init(emptyJson);
+			settings.init(json);
 	
 			var dataPlugins = settings.getDataPlugins();
 			loadPlugins(dataPlugins, function() {
@@ -49,11 +33,9 @@ class MyInfo {
 				loadPlugins(layoutPlugins, function() {
 					log(INFO, "layoutPlugins loaded");
 	
-					loadJson(userdata_ID0_json, function(json) {
-						log(INFO, "userdata-ID0.json loaded");
-						// ToDo: Egyelőre a default értékekkel dolgozom.
-						var emptyJson;
-						userData.init(emptyJson);
+					loadJson("/api/v1/userdata", function(json) {
+						log(INFO, "userdata.json loaded");
+						userData.init(json);
 	
 						uiInit(mainDomID);
 						uiRefreshHome(userData.getDatasets());
@@ -126,5 +108,5 @@ class MyInfo {
 };
 
 
-//export {run, refreshHome, openDataset, registerDataPlugin, registerLayoutPlugin};
+//export {refreshHome, openDataset, registerDataPlugin, registerLayoutPlugin};
 export {MyInfo};

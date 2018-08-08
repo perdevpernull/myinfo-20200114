@@ -4,6 +4,7 @@ function loadPlugins(plugins, callback) {
 
 	if (numOfplugins > itemsProcessed) {
 		for (var key in plugins) {
+			// ToDo: Majd át kell írni, h a $.getScript importként jöjjön!
 			$.getScript(plugins[key].link, function() {
 				itemsProcessed++;
 				if (itemsProcessed === numOfplugins) {

@@ -2,7 +2,6 @@ import {log, loginc, logdec, ERROR, WARNING, INFO, DEBUG} from "../common/util/l
 import {LayoutPlugin} from "../common/layoutplugin";
 import {calcPathWithDirs} from "./util/calcpathwithdirs";
 
-var undefined;
 var nodeHeight = 42;
 var margo = 5;
 
@@ -15,7 +14,7 @@ class LP_Thebrain extends LayoutPlugin {
 			visibles: {
 				nodeIDs: [],
 				links: [],
-				actualID: undefined,
+				actualID: null,
 				childIDs: [],
 				parentIDs: [],
 				friendIDs: [],
@@ -24,7 +23,7 @@ class LP_Thebrain extends LayoutPlugin {
 			nodes: {},
 			historyIDs: [],
 			viewMode: "normal",
-			newNode: {linkType: "", sourceClass: undefined, sourceNodeID: undefined, targetClass: undefined, targetNodeID: undefined},
+			newNode: {linkType: "", sourceClass: null, sourceNodeID: null, targetClass: null, targetNodeID: null},
 		};
 		loginc();
 		log(DEBUG, "Checking for dp_note ...");
@@ -130,7 +129,7 @@ class LP_Thebrain extends LayoutPlugin {
 						_this.svgBase.select("#dragcircle").remove();
 						_this.svgBase.select("#dragpath").remove();
 						_this._tmp.viewMode = "normal";
-						if (_this._tmp.newNode.sourceNodeID !== undefined) {
+						if (_this._tmp.newNode.sourceNodeID !== null) {
 							_this._setCirclesDisplay(_this._tmp.newNode.sourceNodeID, "showHasLinks");
 						};
 					});
@@ -423,7 +422,7 @@ class LP_Thebrain extends LayoutPlugin {
 
 		// The ACTUAL itself
 			this._tmp.visibles.nodeIDs = [];
-			//this._tmp.visibles.actualID = undefined;
+			//this._tmp.visibles.actualID = null;
 			// Itt még nem lehet ismétlődés
 			if (!this._tmp.nodes[`ID${nodeID}`]) {
 				this._tmp.nodes[`ID${nodeID}`] = {};
@@ -908,14 +907,14 @@ class LP_Thebrain extends LayoutPlugin {
 				this._tmp.newNode.targetNodeID = nodeID;
 				this._tmp.newNode.targetClass = d3.select(node).attr("class");
 			} else {
-				this._tmp.newNode.targetNodeID = undefined;
-				this._tmp.newNode.targetClass = undefined;
+				this._tmp.newNode.targetNodeID = null;
+				this._tmp.newNode.targetClass = null;
 			};
 		} else {
 			this._tmp.newNode.sourceNodeID = nodeID;
 			this._tmp.newNode.sourceClass = d3.select(node).attr("class");
-			this._tmp.newNode.targetNodeID = undefined;
-			this._tmp.newNode.targetClass = undefined;
+			this._tmp.newNode.targetNodeID = null;
+			this._tmp.newNode.targetClass = null;
 		};
 	};
 
@@ -926,16 +925,16 @@ class LP_Thebrain extends LayoutPlugin {
 
 		if (this._tmp.viewMode === "normal") {
 			this._setCirclesDisplay(nodeID, "showHasLinks");
-			this._tmp.newNode.sourceNodeID = undefined;
-			this._tmp.newNode.sourceClass = undefined;
-			this._tmp.newNode.targetNodeID = undefined;
-			this._tmp.newNode.targetClass = undefined;
+			this._tmp.newNode.sourceNodeID = null;
+			this._tmp.newNode.sourceClass = null;
+			this._tmp.newNode.targetNodeID = null;
+			this._tmp.newNode.targetClass = null;
 		} else if (this._tmp.viewMode === "insert") {
 			if (this._tmp.newNode.sourceNodeID !== nodeID) {
 				this._setCirclesDisplay(nodeID, "showHasLinks");
 			};
 			this._tmp.newNode.targetNodeID = -1;
-			this._tmp.newNode.targetClass = undefined;
+			this._tmp.newNode.targetClass = null;
 		};
 	};
 
@@ -959,7 +958,7 @@ class LP_Thebrain extends LayoutPlugin {
 		if ((Math.abs(d3.event.x) > node.width/2) || (Math.abs(d3.event.y) > node.height/2)) {
 			// Kiléptünk a nodeból --> valós dragging
 			if (!dragcircle.empty()) {
-				if ((this._tmp.newNode.targetNodeID === -1) || (this._tmp.newNode.targetNodeID === undefined)) {
+				if ((this._tmp.newNode.targetNodeID === -1) || (this._tmp.newNode.targetNodeID === null)) {
 					dragcircle
 						.style("opacity", 1)
 						.attr("transform", function(d) {
@@ -1084,7 +1083,7 @@ class LP_Thebrain extends LayoutPlugin {
 
 	_eventDragEndCircle(nodeID, circle) {
 		log(DEBUG, `eventDragEndCircle(${this._tmp.newNode.sourceNodeID}, ${this._tmp.newNode.targetNodeID}, ${this._tmp.newNode.linkType})`);
-		if (this._tmp.newNode.targetNodeID !== undefined) {
+		if (this._tmp.newNode.targetNodeID !== null) {
 			if (this._tmp.newNode.targetNodeID === -1) {
 				$(`#search-${this.datasetKey}-${this.viewKey}`).select2("open");
 			} else {
