@@ -7,18 +7,19 @@ import {Dataset} from "../common/model/dataset";
 import {uiInit, uiRefreshHome, uiAddMenuAndWs, uiDeleteMenuAndWs} from "./view/ui";
 
 
+var mainDomID = null;
 class MyInfo {
 	constructor(domID) {
 		// Initial settings
 		setLogLevel(DEBUG);
 	
 		if (domID === null) {
-			this.mainDomID = "#myinfo";
+			mainDomID = "#myinfo";
 		} else {
-			this.mainDomID = domID;
+			mainDomID = domID;
 		};
 	
-		log(INFO, `main.run(${this.mainDomID})`);
+		log(INFO, `main.constructor(${mainDomID})`);
 	
 		loadJson("/api/v1/settings", function(json) {
 			log(INFO, "settings.json loaded");
@@ -36,7 +37,7 @@ class MyInfo {
 						log(INFO, "userdata.json loaded");
 						userData.init(json);
 	
-						uiInit(this.mainDomID);
+						uiInit(mainDomID);
 						uiRefreshHome(userData.getDatasets());
 					});
 				});
@@ -77,7 +78,7 @@ class MyInfo {
 							lp_instance = new (settings.getLayoutPluginClass(view.layoutPluginKey))(datasetKey, viewKey, datasetInstance, view);
 							userData.setLayoutPluginInstance(datasetKey, viewKey, lp_instance);
 						};
-						lp_instance.constructLayout($(this.mainDomID).width(),$(this.mainDomID).height() - 100);
+						lp_instance.constructLayout($(mainDomID).width(),$(mainDomID).height() - 100);
 	
 						// Időőt kell hagyni az új tab megjelenésének (mert amíg nem jelent meg teljesen, addig a getBBox() fv nem működik.)
 							setTimeout(function(){ lp_instance.refreshLayout(); }, 1000);
