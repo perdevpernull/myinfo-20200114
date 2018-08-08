@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack",
     "webpack-dev-server": "webpack-dev-server",
-    "start": "start node myinfoServer.js"
+    "start": "start node src\\main_myinfoServer.js"
   },
   "repository": {
     "type": "git",
@@ -29,7 +29,9 @@
   },
   "homepage": "https://github.com/perdevpernull/myinfo#readme",
   "dependencies": {
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "express-session": "^1.15.6",
+    "memorystore": "^1.6.0"
   },
   "devDependencies": {
     "clean-webpack-plugin": "^0.1.19",

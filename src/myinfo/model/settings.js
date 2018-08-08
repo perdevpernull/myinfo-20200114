@@ -69,7 +69,7 @@ var settings = {
 	registerLayoutPlugin(layoutPluginKey, layoutPluginClass) {
 		loginc();
 		log(INFO, `settings.registerLayoutPlugin(${layoutPluginKey})`);
-		if (this._data.layoutPlugins[layoutPluginKey].class === undefined) {
+		if (this._data.layoutPlugins[layoutPluginKey].class === null) {
 			log(DEBUG, `settings.registerLayoutPlugin(${layoutPluginKey}).class`);
 			this._data.layoutPlugins[layoutPluginKey].class = layoutPluginClass;
 		} else {
