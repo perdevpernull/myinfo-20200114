@@ -7,8 +7,8 @@ module.exports = function apiSettings(req, res, next) {
             switch (req.method) {
                 case "GET":
                     // ToDo: put base_dir into some config file.
-                    res.sendFile(base_dir+"/"+req.session.userID+"/"+"settings.json");
-                    console.log(`settings: GET`);
+                    res.sendFile(base_dir+"/"+"settings.json");
+                    console.log(`settings: GET (${base_dir+"/"+"settings.json"})`);
                     break;
                 case "PUT":
                     console.log(`settings: PUT`);
