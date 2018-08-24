@@ -86,7 +86,7 @@ function uiInit(domID) {
 			var title = $("#dataset-title").val();
 			var description = $("#dataset-description").val();
 			// ToDo: Innen a userData-t majd száműzni kell. Ne legyen importálva.
-			var datasets = userData.getDatasets();
+			var datasets = myinfo.userData.getDatasets();
 			datasets[key].title = title;
 			datasets[key].description = description;
 			myinfo.refreshHome();
