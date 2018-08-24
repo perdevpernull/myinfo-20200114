@@ -1,35 +1,35 @@
 import {setLogLevel, log, loginc, logdec, ERROR, WARNING, INFO, DEBUG} from "../common/util/log";
 import {loadJson} from "../common/util/loadjson";
 import {loadPlugins} from "../common/util/loadplugins";
-import {settings} from "./model/settings";
+import {Settings} from "./model/settings";
 import {userData} from "./model/userdata";
 import {Dataset} from "../common/model/dataset";
 import {uiInit, uiRefreshHome, uiAddMenuAndWs, uiDeleteMenuAndWs} from "./view/ui";
 
-
-var mainDomID = null;
+var _this = null;
 class MyInfo {
 	constructor(domID) {
+		_this = this;
 		// Initial settings
 		setLogLevel(DEBUG);
 	
 		if (domID === null) {
-			mainDomID = "#myinfo";
+			_this.mainDomID = "#myinfo";
 		} else {
-			mainDomID = domID;
+			_this.mainDomID = domID;
 		};
 	
-		log(INFO, `main.constructor(${mainDomID})`);
+		log(INFO, `main.constructor(${_this.mainDomID})`);
 	
 		loadJson("/api/v1/settings", function(json) {
 			log(INFO, "settings.json loaded");
-			settings.init(json);
+			_this.settings = new Settings(json);
 	
-			var dataPlugins = settings.getDataPlugins();
+			var dataPlugins = _this.settings.getDataPlugins();
 			loadPlugins(dataPlugins, function() {
 				log(INFO, "dataPlugins loaded");
 	
-				var layoutPlugins = settings.getLayoutPlugins();
+				var layoutPlugins = _this.settings.getLayoutPlugins();
 				loadPlugins(layoutPlugins, function() {
 					log(INFO, "layoutPlugins loaded");
 	
@@ -37,7 +37,7 @@ class MyInfo {
 						log(INFO, "userdata.json loaded");
 						userData.init(json);
 	
-						uiInit(mainDomID);
+						uiInit(_this.mainDomID);
 						uiRefreshHome(userData.getDatasets());
 					});
 				});
@@ -75,10 +75,10 @@ class MyInfo {
 	
 						var lp_instance = userData.getLayoutPluginInstance(datasetKey, viewKey);
 						if (!lp_instance) {
-							lp_instance = new (settings.getLayoutPluginClass(view.layoutPluginKey))(datasetKey, viewKey, datasetInstance, view);
+							lp_instance = new (_this.settings.getLayoutPluginClass(view.layoutPluginKey))(datasetKey, viewKey, datasetInstance, view);
 							userData.setLayoutPluginInstance(datasetKey, viewKey, lp_instance);
 						};
-						lp_instance.constructLayout($(mainDomID).width(),$(mainDomID).height() - 100);
+						lp_instance.constructLayout($(_this.mainDomID).width(),$(_this.mainDomID).height() - 100);
 	
 						// Időőt kell hagyni az új tab megjelenésének (mert amíg nem jelent meg teljesen, addig a getBBox() fv nem működik.)
 							setTimeout(function(){ lp_instance.refreshLayout(); }, 1000);
@@ -98,11 +98,11 @@ class MyInfo {
 	
 	registerDataPlugin(dataPluginKey, dataPluginInstall) { //, dataPluginClass) {
 		dataPluginInstall(Dataset);
-		settings.registerDataPlugin(dataPluginKey); //, dataPluginClass);
+		_this.settings.registerDataPlugin(dataPluginKey); //, dataPluginClass);
 	};
 	
 	registerLayoutPlugin(layoutPluginKey, layoutPluginClass) {
-		settings.registerLayoutPlugin(layoutPluginKey, layoutPluginClass);
+		_this.settings.registerLayoutPlugin(layoutPluginKey, layoutPluginClass);
 	};
 	
 };
