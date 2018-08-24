@@ -2,7 +2,7 @@ import {setLogLevel, log, loginc, logdec, ERROR, WARNING, INFO, DEBUG} from "../
 import {loadJson} from "../common/util/loadjson";
 import {loadPlugins} from "../common/util/loadplugins";
 import {Settings} from "./model/settings";
-import {userData} from "./model/userdata";
+import {UserData} from "./model/userdata";
 import {Dataset} from "../common/model/dataset";
 import {uiInit, uiRefreshHome, uiAddMenuAndWs, uiDeleteMenuAndWs} from "./view/ui";
 
@@ -35,10 +35,10 @@ class MyInfo {
 	
 					loadJson("/api/v1/userdata", function(json) {
 						log(INFO, "userdata.json loaded");
-						userData.init(json);
+						_this.userData = new UserData(json);
 	
 						uiInit(_this.mainDomID);
-						uiRefreshHome(userData.getDatasets());
+						uiRefreshHome(_this.userData.getDatasets());
 					});
 				});
 			});
@@ -47,7 +47,7 @@ class MyInfo {
 
 	refreshHome() {
 		log(DEBUG, `main.refreshHome()`);
-		uiRefreshHome(userData.getDatasets());
+		uiRefreshHome(_this.userData.getDatasets());
 	};
 	
 	openDataset(datasetKey, viewKey) {
@@ -57,26 +57,26 @@ class MyInfo {
 		} else if (datasetKey === "CreateNew") {
 			// ToDo: meg kell írni.
 		} else {
-			var dataset = userData.getDataset(datasetKey);
+			var dataset = _this.userData.getDataset(datasetKey);
 			if (dataset) {
 				if (!dataset.tabIndex) {
 					loadJson(dataset.link, function(json) {
 						log(INFO, `${dataset.link} loaded`);
 	
 						var datasetInstance = new Dataset(json);
-						userData.setDatasetInstance(datasetKey, datasetInstance);
+						_this.userData.setDatasetInstance(datasetKey, datasetInstance);
 	
-						var view = userData.getView(datasetKey, viewKey);
+						var view = _this.userData.getView(datasetKey, viewKey);
 						viewKey = "ID"+view.ID;
 	
 						dataset.tabIndex = uiAddMenuAndWs(datasetKey, `${dataset.title}:${view.title}`);
 						// Activate the newly added tab
 							$(`#menu li:eq(${dataset.tabIndex}) a`).tab('show');
 	
-						var lp_instance = userData.getLayoutPluginInstance(datasetKey, viewKey);
+						var lp_instance = _this.userData.getLayoutPluginInstance(datasetKey, viewKey);
 						if (!lp_instance) {
 							lp_instance = new (_this.settings.getLayoutPluginClass(view.layoutPluginKey))(datasetKey, viewKey, datasetInstance, view);
-							userData.setLayoutPluginInstance(datasetKey, viewKey, lp_instance);
+							_this.userData.setLayoutPluginInstance(datasetKey, viewKey, lp_instance);
 						};
 						lp_instance.constructLayout($(_this.mainDomID).width(),$(_this.mainDomID).height() - 100);
 	
@@ -84,7 +84,7 @@ class MyInfo {
 							setTimeout(function(){ lp_instance.refreshLayout(); }, 1000);
 						//lp_instance.destructLayout();
 	
-						uiRefreshHome(userData.getDatasets());
+						uiRefreshHome(_this.userData.getDatasets());
 					});
 				} else {
 					$(`#menu li:eq(${dataset.tabIndex}) a`).tab('show');
