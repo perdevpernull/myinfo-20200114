@@ -1,98 +1,79 @@
 import {log, loginc, logdec, ERROR, WARNING, INFO, DEBUG} from "../../common/util/log";
-var undefined;
 
 
-var settings = {
-	_data: {msg: "You have to initialize first!"},
-
-	init: function(jsonData) {
+class Settings {
+	constructor(jsonData) {
 		loginc();
-		log(DEBUG, `settings.init(${jsonData})`);
-		if (jsonData === undefined) {
-			// ToDo: Majd ezt innen ki kell szervezni, h csak tényleges adattal lehessen inicializálni.
-			this._data = {
-				dataPlugins: {
-					"dp_note": {key: "dp_note", link: "dp_note.js", registered: false}
-				},
-				layoutPlugins: {
-					"lp_thebrain": {key: "lp_thebrain", link: "lp_thebrain.js", class: undefined, dpDependencies: ["dp_note"]}
-				}
-			};
+		log(DEBUG, `Settings.constructor(${jsonData})`);
+		if (jsonData === null) {
+			this._data = {msg: "You have to initialize first!"};
 		} else {
 			this._data = jsonData;
 		};
 		log(DEBUG, JSON.stringify(this._data));
 		logdec();
-	},
+	};
 
 	getJsonData() {
 		loginc();
-		log(DEBUG, `settings.getJsonData()`);
+		log(DEBUG, `Settings.getJsonData()`);
 		logdec();
 		return JSON.stringify(this._data);
-	},
+	};
 
 	getDataPlugins() {
 		loginc();
-		log(DEBUG, `settings.getDataPlugins()`);
+		log(DEBUG, `Settings.getDataPlugins()`);
 		logdec();
 		return this._data.dataPlugins;
-	},
+	};
 
-	registerDataPlugin(dataPluginKey) { //, dataPluginClass) {
+	registerDataPlugin(dataPluginKey) {
 		loginc();
-		log(INFO, `settings.registerDataPlugin(${dataPluginKey})`);
-		/*if (this._data.dataPlugins[dataPluginKey].class === undefined) {
-			log(DEBUG, `settings.registerDataPlugin(${dataPluginKey}).class`);
-			this._data.dataPlugins[dataPluginKey].class = dataPluginClass;
-		} else {
-			log(ERROR, `settings.registerDataPlugin(${dataPluginKey}).class already registered`);
-		};*/
+		log(INFO, `Settings.registerDataPlugin(${dataPluginKey})`);
 
 		if (this._data.dataPlugins[dataPluginKey].registered === false) {
-			log(DEBUG, `settings.registerDataPlugin(${dataPluginKey}).registered(true)`);
+			log(DEBUG, `Settings.registerDataPlugin(${dataPluginKey}).registered(true)`);
 			this._data.dataPlugins[dataPluginKey].registered = true;
 		} else {
-			log(ERROR, `settings.registerDataPlugin(${dataPluginKey}) already registered`);
+			log(ERROR, `Settings.registerDataPlugin(${dataPluginKey}).already_registered`);
 		};
 
 		logdec();
-	},
+	};
 
 	getLayoutPlugins() {
 		loginc();
-		log(DEBUG, `settings.getLayoutPlugins()`);
+		log(DEBUG, `Settings.getLayoutPlugins()`);
 		logdec();
 		return this._data.layoutPlugins;
-	},
+	};
 
 	registerLayoutPlugin(layoutPluginKey, layoutPluginClass) {
 		loginc();
-		log(INFO, `settings.registerLayoutPlugin(${layoutPluginKey})`);
+		log(INFO, `Settings.registerLayoutPlugin(${layoutPluginKey})`);
 		if (this._data.layoutPlugins[layoutPluginKey].class === null) {
-			log(DEBUG, `settings.registerLayoutPlugin(${layoutPluginKey}).class`);
+			log(DEBUG, `Settings.registerLayoutPlugin(${layoutPluginKey}).class.registered`);
 			this._data.layoutPlugins[layoutPluginKey].class = layoutPluginClass;
 		} else {
-			log(ERROR, `settings.registerLayoutPlugin(${layoutPluginKey}).class already registered`);
+			log(ERROR, `Settings.registerLayoutPlugin(${layoutPluginKey}).class.already_registered`);
 		}
 		logdec();
-	},
+	};
 
 	getLayoutPluginClass(layoutPluginKey) {
 		loginc();
-		log(DEBUG, `settings.getLayoutPluginClass(${layoutPluginKey})`);
+		log(DEBUG, `Settings.getLayoutPluginClass(${layoutPluginKey})`);
 		if (this._data.layoutPlugins[layoutPluginKey].class) {
-			log(DEBUG, `settings.getLayoutPluginClass(${layoutPluginKey}).loaded`);
+			log(DEBUG, `settings.getLayoutPluginClass(${layoutPluginKey}).returned`);
 			logdec();
 			return this._data.layoutPlugins[layoutPluginKey].class;
 		} else {
-			log(ERROR, `settings.getLayoutPluginClass(${layoutPluginKey}).not_loaded`);
+			log(ERROR, `settings.getLayoutPluginClass(${layoutPluginKey}).null`);
 			logdec();
-			return undefined;
+			return null;
 		};
-	}
-
+	};
 };
 
-
-export {settings};
+export {Settings};
