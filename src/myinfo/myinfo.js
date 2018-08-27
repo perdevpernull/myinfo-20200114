@@ -9,49 +9,61 @@ import {uiInit, uiRefreshHome, uiAddMenuAndWs, uiDeleteMenuAndWs} from "./view/u
 var _this = null;
 class MyInfo {
 	constructor(domID) {
-		_this = this;
-		// Initial settings
-		setLogLevel(DEBUG);
+		if (_this === null) {
+			_this = this;
+			// Initial settings
+			setLogLevel(DEBUG);
+
+			if (domID === null) {
+				_this.mainDomID = "#myinfo";
+			} else {
+				_this.mainDomID = domID;
+			};
 	
-		if (domID === null) {
-			_this.mainDomID = "#myinfo";
-		} else {
-			_this.mainDomID = domID;
-		};
-	
-		log(INFO, `main.constructor(${_this.mainDomID})`);
-	
-		loadJson("/api/v1/settings", function(json) {
-			log(INFO, "settings.json loaded");
-			_this.settings = new Settings(json);
-	
-			var dataPlugins = _this.settings.getDataPlugins();
-			loadPlugins(dataPlugins, function() {
-				log(INFO, "dataPlugins loaded");
-	
-				var layoutPlugins = _this.settings.getLayoutPlugins();
-				loadPlugins(layoutPlugins, function() {
-					log(INFO, "layoutPlugins loaded");
-	
-					loadJson("/api/v1/userdata", function(json) {
-						log(INFO, "userdata.json loaded");
-						_this.userData = new UserData(json);
-	
-						uiInit(_this.mainDomID);
-						uiRefreshHome(_this.userData.getDatasets());
+			log(INFO, `MyInfo.constructor(${_this.mainDomID})`);
+		
+			loadJson("/api/v1/settings", function(json) {
+				log(INFO, "Settings.json loaded");
+				_this.settings = new Settings(json);
+
+				var dataPlugins = _this.settings.getDataPlugins();
+				loadPlugins(dataPlugins, function() {
+					log(INFO, "dataPlugins loaded");
+					
+					var layoutPlugins = _this.settings.getLayoutPlugins();
+					loadPlugins(layoutPlugins, function() {
+						log(INFO, "layoutPlugins loaded");
+						
+						loadJson("/api/v1/userdata", function(json) {
+							log(INFO, "UserData.json loaded");
+							_this.userData = new UserData(json);
+							
+							uiInit(_this.mainDomID);
+							uiRefreshHome(_this.userData.getDatasets());
+						});
 					});
 				});
 			});
-		});
+		} else {
+			log(ERROR, "Settings is already created (singleton)");
+		};
+	};
+
+	saveSettings() {
+		// ToDo: meg kell írni.
+	};
+
+	loadUserData() {
+		//
 	};
 
 	refreshHome() {
-		log(DEBUG, `main.refreshHome()`);
+		log(DEBUG, `MyInfo.refreshHome()`);
 		uiRefreshHome(_this.userData.getDatasets());
 	};
 	
 	openDataset(datasetKey, viewKey) {
-		log(DEBUG, `main.openDataset(${datasetKey},${viewKey})`);
+		log(DEBUG, `MyInfo.openDataset(${datasetKey},${viewKey})`);
 		if (datasetKey === "OpenNew") {
 			// ToDo: meg kell írni.
 		} else if (datasetKey === "CreateNew") {
@@ -71,7 +83,7 @@ class MyInfo {
 	
 						dataset.tabIndex = uiAddMenuAndWs(datasetKey, `${dataset.title}:${view.title}`);
 						// Activate the newly added tab
-							$(`#menu li:eq(${dataset.tabIndex}) a`).tab('show');
+						$(`#menu li:eq(${dataset.tabIndex}) a`).tab('show');
 	
 						var lp_instance = _this.userData.getLayoutPluginInstance(datasetKey, viewKey);
 						if (!lp_instance) {
@@ -80,8 +92,8 @@ class MyInfo {
 						};
 						lp_instance.constructLayout($(_this.mainDomID).width(),$(_this.mainDomID).height() - 100);
 	
-						// Időőt kell hagyni az új tab megjelenésének (mert amíg nem jelent meg teljesen, addig a getBBox() fv nem működik.)
-							setTimeout(function(){ lp_instance.refreshLayout(); }, 1000);
+						// Időt kell hagyni az új tab megjelenésének (mert amíg nem jelent meg teljesen, addig a getBBox() fv nem működik.)
+						setTimeout(function(){ lp_instance.refreshLayout(); }, 1000);
 						//lp_instance.destructLayout();
 	
 						uiRefreshHome(_this.userData.getDatasets());
@@ -108,5 +120,4 @@ class MyInfo {
 };
 
 
-//export {refreshHome, openDataset, registerDataPlugin, registerLayoutPlugin};
 export {MyInfo};

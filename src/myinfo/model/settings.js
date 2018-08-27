@@ -65,11 +65,11 @@ class Settings {
 		loginc();
 		log(DEBUG, `Settings.getLayoutPluginClass(${layoutPluginKey})`);
 		if (this._data.layoutPlugins[layoutPluginKey].class) {
-			log(DEBUG, `settings.getLayoutPluginClass(${layoutPluginKey}).returned`);
+			log(DEBUG, `Settings.getLayoutPluginClass(${layoutPluginKey}).returned`);
 			logdec();
 			return this._data.layoutPlugins[layoutPluginKey].class;
 		} else {
-			log(ERROR, `settings.getLayoutPluginClass(${layoutPluginKey}).null`);
+			log(ERROR, `Settings.getLayoutPluginClass(${layoutPluginKey}).null`);
 			logdec();
 			return null;
 		};
