@@ -4,7 +4,8 @@ import {loadPlugins} from "../common/util/loadplugins";
 import {Settings} from "./model/settings";
 import {UserData} from "./model/userdata";
 import {Dataset} from "../common/model/dataset";
-import {uiInit, uiRefreshHome, uiAddMenuAndWs, uiDeleteMenuAndWs} from "./view/ui";
+import {UI} from "./view/ui";
+
 
 var _this = null;
 class MyInfo {
@@ -38,8 +39,8 @@ class MyInfo {
 							log(INFO, "UserData.json loaded");
 							_this.userData = new UserData(json);
 							
-							uiInit(_this.mainDomID);
-							uiRefreshHome(_this.userData.getDatasets());
+							_this.ui = new UI(_this.mainDomID);
+							_this.ui.refreshHome(_this.userData.getDatasets());
 						});
 					});
 				});
@@ -59,7 +60,7 @@ class MyInfo {
 
 	refreshHome() {
 		log(DEBUG, `MyInfo.refreshHome()`);
-		uiRefreshHome(_this.userData.getDatasets());
+		this.ui.refreshHome(this.userData.getDatasets());
 	};
 	
 	openDataset(datasetKey, viewKey) {
@@ -81,7 +82,7 @@ class MyInfo {
 						var view = _this.userData.getView(datasetKey, viewKey);
 						viewKey = "ID"+view.ID;
 	
-						dataset.tabIndex = uiAddMenuAndWs(datasetKey, `${dataset.title}:${view.title}`);
+						dataset.tabIndex = _this.ui.addMenuAndWs(datasetKey, `${dataset.title}:${view.title}`);
 						// Activate the newly added tab
 						$(`#menu li:eq(${dataset.tabIndex}) a`).tab('show');
 	
@@ -96,7 +97,7 @@ class MyInfo {
 						setTimeout(function(){ lp_instance.refreshLayout(); }, 1000);
 						//lp_instance.destructLayout();
 	
-						uiRefreshHome(_this.userData.getDatasets());
+						_this.ui.refreshHome(_this.userData.getDatasets());
 					});
 				} else {
 					$(`#menu li:eq(${dataset.tabIndex}) a`).tab('show');
