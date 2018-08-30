@@ -1,4 +1,4 @@
-import {log, loginc, logdec, ERROR, WARNING, INFO, DEBUG} from "../common/util/log";
+import {log} from "../common/util/log";
 import {LayoutPlugin} from "../common/layoutplugin";
 import {calcPathWithDirs} from "./util/calcpathwithdirs";
 
@@ -9,7 +9,7 @@ var margo = 5;
 class LP_Thebrain extends LayoutPlugin {
 	constructor(datasetKey, viewKey, datasetInstance, view) {
 		super(datasetKey, viewKey, datasetInstance, view);
-		log(DEBUG, "LP_Thebrain.constructor()");
+		log.DEBUG("LP_Thebrain.constructor()");
 		this._tmp = {
 			visibles: {
 				nodeIDs: [],
@@ -25,20 +25,20 @@ class LP_Thebrain extends LayoutPlugin {
 			viewMode: "normal",
 			newNode: {linkType: "", sourceClass: null, sourceNodeID: null, targetClass: null, targetNodeID: null},
 		};
-		loginc();
-		log(DEBUG, "Checking for dp_note ...");
+		log.loginc();
+		log.DEBUG("Checking for dp_note ...");
 		if (this._datasetInstance["dp_note"]) {
-			log(DEBUG, `dp_note(${this._datasetInstance.dp_note()})`);
+			log.DEBUG(`dp_note(${this._datasetInstance.dp_note()})`);
 		} else {
 			// ToDo: Itt majd kell egy exception, h nem futhatunk tovább!
-			log(DEBUG, `dp_note() not installed`);
+			log.DEBUG(`dp_note() not installed`);
 		};
-		logdec();
-		log(DEBUG, "LP_Thebrain.constructor()");
+		log.logdec();
+		log.DEBUG("LP_Thebrain.constructor()");
 	};
 
 	constructLayout(width, height) {
-		log(DEBUG, `LP_Thebrain.constructLayout(${width},${height})`);
+		log.DEBUG(`LP_Thebrain.constructLayout(${width},${height})`);
 		var _this = this;
 		var str;
 
@@ -204,22 +204,22 @@ class LP_Thebrain extends LayoutPlugin {
 	};
 
 	destructLayout() {
-		log(DEBUG, "LayoutPlugin.destructLayout()");
+		log.DEBUG("LayoutPlugin.destructLayout()");
 		$(`#lp_thebrain-${this.datasetKey}-${this.viewKey}`).remove();
 	};
 
 	resizeLayout(width, height) {
 
-		log(DEBUG, "LP_Thebrain.resizeLayout()");
+		log.DEBUG("LP_Thebrain.resizeLayout()");
 	};
 
 	refreshLayout() {
-		log(DEBUG, "LP_Thebrain.refreshLayout()");
+		log.DEBUG("LP_Thebrain.refreshLayout()");
 		this._drawVisibles(this._view.viewData.selectedNodeID);
 	};
 
 	_setZones(width, height) {
-		log(DEBUG, `_setZones(${width},${height})`);
+		log.DEBUG(`_setZones(${width},${height})`);
 		this._x = 0;
 		this._y = 0;
 		this._w = width;
@@ -239,11 +239,11 @@ class LP_Thebrain extends LayoutPlugin {
 		this._friendEntrypoint = {x: this._x, y: this._y};
 		this._siblingEntrypoint = {x: this._x + this._w, y: this._y};
 
-		log(DEBUG, `_setZones.placeholder(${this._placeholder.x},${this._placeholder.y})`);
+		log.DEBUG(`_setZones.placeholder(${this._placeholder.x},${this._placeholder.y})`);
 	};
 
 	_drawVisibles(nodeID) {
-		log(DEBUG, `_drawVisibles(${nodeID})`);
+		log.DEBUG(`_drawVisibles(${nodeID})`);
 
 		var visibleNodeID;
 		var _this = this;
@@ -260,7 +260,7 @@ class LP_Thebrain extends LayoutPlugin {
 		// A kattintás után látható elmek kikeresése és pozíciójuk meghatározása
 			this._findVisibles(nodeID);
 			this._calcVisiblesPositions();
-			log(DEBUG, "Visible nodeIDs: " + JSON.stringify(this._tmp.visibles.nodeIDs));
+			log.DEBUG("Visible nodeIDs: " + JSON.stringify(this._tmp.visibles.nodeIDs));
 
 		// Placeholder mozgaása
 			if (this._tmp.nodes[`ID${nodeID}`].x0) {
@@ -283,7 +283,7 @@ class LP_Thebrain extends LayoutPlugin {
 			// MODIFY nodes
 				tmpNodes.transition().duration(this._view.viewData.animationDuration)
 					.attr("transform", function(d) {
-						//log(DEBUG, `MODIFY node d(${d})`);
+						//log.DEBUG(`MODIFY node d(${d})`);
 						return "translate(" + _this._tmp.nodes[`ID${d}`].x + "," + _this._tmp.nodes[`ID${d}`].y + ")"; })
 				;
 				tmpNodes.select(".rectangle").transition().duration(this._view.viewData.animationDuration)
@@ -316,14 +316,14 @@ class LP_Thebrain extends LayoutPlugin {
 					.transition().duration(this._view.viewData.animationDuration)
 						.style("opacity", 1)
 						.attr("transform", function(d) {
-							//log(DEBUG, `APPEND node d(${d})`);
+							//log.DEBUG(`APPEND node d(${d})`);
 							return "translate(" + _this._tmp.nodes[`ID${d}`].x + "," + _this._tmp.nodes[`ID${d}`].y + ")"; })
 				;
 
 			// REMOVE nodes
 				tmpNodes.exit()
 					.attr("class", function(d) {
-						log(DEBUG, `REMOVE node d(${d})`);
+						log.DEBUG(`REMOVE node d(${d})`);
 						_this._tmp.nodes[`ID${d}`].x = null;
 						_this._tmp.nodes[`ID${d}`].y = null;
 						_this._tmp.nodes[`ID${d}`].x0 = null;
@@ -333,7 +333,7 @@ class LP_Thebrain extends LayoutPlugin {
 					.remove()
 				;
 
-		//log(DEBUG, JSON.stringify(this._tmp.visibles.links));
+		//log.DEBUG(JSON.stringify(this._tmp.visibles.links));
 
 		// Változások lekérdezése és átrajzolás (links)
 			var tmpLinks = this.svgLinks.selectAll("path")
@@ -342,7 +342,7 @@ class LP_Thebrain extends LayoutPlugin {
 			// MODIFY links
 				tmpLinks.transition().duration(this._view.viewData.animationDuration)
 					.attr("d", function(d) {
-						//log(DEBUG, `MODIFY link d(${JSON.stringify(d)})`);
+						//log.DEBUG(`MODIFY link d(${JSON.stringify(d)})`);
 
 						if (d["type"] === "friend") {
 							var sign = ((_this._tmp.nodes[`ID${d.source}`].x <= _this._tmp.nodes[`ID${d.target}`].x) ? 1 : -1);
@@ -375,7 +375,7 @@ class LP_Thebrain extends LayoutPlugin {
 					.transition().duration(this._view.viewData.animationDuration)
 						.style("opacity", 1)
 						.attr("d", function(d) {
-							//log(DEBUG, `APPEND link d(${JSON.stringify(d)})`);
+							//log.DEBUG(`APPEND link d(${JSON.stringify(d)})`);
 							if (d["type"] === "friend") {
 								var sign = ((_this._tmp.nodes[`ID${d.source}`].x <= _this._tmp.nodes[`ID${d.target}`].x) ? 1 : -1);
 								var node = d3.select("#node_"+d.source);
@@ -510,7 +510,7 @@ class LP_Thebrain extends LayoutPlugin {
 
 					if (this._tmp.visibles.nodeIDs.indexOf(toNodeID) >= 0) {
 						var linkType = allLinks[j].type;
-						//log(DEBUG, `fromNodeID(${fromNodeID}), toNodeID(${toNodeID}), type(${linkType})`);
+						//log.DEBUG(`fromNodeID(${fromNodeID}), toNodeID(${toNodeID}), type(${linkType})`);
 						if (fromNodeID <= toNodeID) {
 							linkKey = "source:"+fromNodeID+"-target:"+toNodeID;
 							link = { key: linkKey, source: fromNodeID, target: toNodeID, type: linkType};
@@ -558,7 +558,7 @@ class LP_Thebrain extends LayoutPlugin {
 				numOfCols = Math.max(Math.ceil(this._tmp.visibles.parentIDs.length / numInOneCol),2);
 			};
 			neededHeight = Math.ceil(this._tmp.visibles.parentIDs.length / numOfCols) * nodeHeight;
-			//log(DEBUG, `numInOneCol(${numInOneCol}), numOfCols(${numOfCols})`);
+			//log.DEBUG(`numInOneCol(${numInOneCol}), numOfCols(${numOfCols})`);
 			for (var i in this._tmp.visibles.parentIDs) {
 				nodeID = this._tmp.visibles.parentIDs[i];
 				if (!this._tmp.nodes[`ID${nodeID}`]) {
@@ -617,7 +617,7 @@ class LP_Thebrain extends LayoutPlugin {
 	};
 
 	_appendNode(selection, _this) {
-		//log(ERROR, "_appendNode" + JSON.stringify(selection));
+		//log.ERROR("_appendNode" + JSON.stringify(selection));
 
 		selection
 			.attr("class", "node")
@@ -657,7 +657,7 @@ class LP_Thebrain extends LayoutPlugin {
 				_this._eventMouseleaveNode(d, this);
 			})
 			.on("click", function(d) {
-				log(DEBUG, `eventClickNode(${d})`);
+				log.DEBUG(`eventClickNode(${d})`);
 				_this._drawVisibles(d);
 			})
 		;
@@ -765,13 +765,13 @@ class LP_Thebrain extends LayoutPlugin {
 	};
 
 	_appendLink(selection, _this) {
-		//log(ERROR, "_appendLink" + JSON.stringify(selection));
+		//log.ERROR("_appendLink" + JSON.stringify(selection));
 
 		selection
 			.style("fill", "none")
 			.style("opacity", 0)
 			.attr("d", function(d) {
-				//log(DEBUG, `_appendLink d(${JSON.stringify(d)})`);
+				//log.DEBUG(`_appendLink d(${JSON.stringify(d)})`);
 				return calcPathWithDirs(
 					_this._tmp.nodes[`ID${d.source}`].x0, _this._tmp.nodes[`ID${d.source}`].y0,
 					_this._tmp.nodes[`ID${d.source}`].width, _this._tmp.nodes[`ID${d.source}`].height,
@@ -823,7 +823,7 @@ class LP_Thebrain extends LayoutPlugin {
 				this._tmp.historyIDs = this._tmp.historyIDs.slice(0,i);
 			};
 		};
-		log(DEBUG, `history(${JSON.stringify(this._tmp.historyIDs)})`);
+		log.DEBUG(`history(${JSON.stringify(this._tmp.historyIDs)})`);
 		var tmpNodes = this.svgHistory.selectAll("g")
 			.data(this._tmp.historyIDs.slice(1,this._tmp.historyIDs.length) , function(d) {return d; })
 		;
@@ -833,7 +833,7 @@ class LP_Thebrain extends LayoutPlugin {
 			;
 			tmpNodes.select(".rectangle").transition().duration(this._view.viewData.animationDuration)
 				.style("fill", function(d) {
-					//log(DEBUG, `d(${d}) ${node.class}Color(${layout_thebrain.dataset.preferences.node[node.class+"Color"]})`);
+					//log.DEBUG(`d(${d}) ${node.class}Color(${layout_thebrain.dataset.preferences.node[node.class+"Color"]})`);
 					return _this._view.viewData.node[_this._tmp.nodes[`ID${d}`].zone+"Color"];
 				})
 				.style("fill-opacity", function(d) {
@@ -891,7 +891,7 @@ class LP_Thebrain extends LayoutPlugin {
 	};
 
 	_eventKeydown(_this) {
-		log(DEBUG, `d3.event.key(${d3.event.key})`);
+		log.DEBUG(`d3.event.key(${d3.event.key})`);
 	};
 
 	_eventMouseenterNode(nodeID, node) {
@@ -939,14 +939,14 @@ class LP_Thebrain extends LayoutPlugin {
 	};
 
 	_eventDragStartCircle(nodeID, circle) {
-		log(DEBUG, `eventDragStartCircle(${nodeID},${d3.select(circle).attr("class")})`);
+		log.DEBUG(`eventDragStartCircle(${nodeID},${d3.select(circle).attr("class")})`);
 
 		this._tmp.viewMode = "insert";
 		this._tmp.newNode.linkType = d3.select(circle).attr("class");
 	};
 
 	_eventDragDragCircle(nodeID, circle) {
-		//log(DEBUG, `eventDragDragCircle.target(${d3.select(this).attr("class")})`);
+		//log.DEBUG(`eventDragDragCircle.target(${d3.select(this).attr("class")})`);
 		var _this = this;
 		var dragcircle = this.svgBase.select("#dragcircle");
 		var dragpath = this.svgBase.select("#dragpath");
@@ -993,7 +993,7 @@ class LP_Thebrain extends LayoutPlugin {
 					;
 					dragpath
 						.attr("d", function() {
-							log(DEBUG, `sourceClass(${sourceClass}), targetClass(${targetClass})`);
+							log.DEBUG(`sourceClass(${sourceClass}), targetClass(${targetClass})`);
 							if (sourceClass === "node") {
 								if (targetClass === "node") {
 									return calcPathWithDirs(
@@ -1082,7 +1082,7 @@ class LP_Thebrain extends LayoutPlugin {
 	};
 
 	_eventDragEndCircle(nodeID, circle) {
-		log(DEBUG, `eventDragEndCircle(${this._tmp.newNode.sourceNodeID}, ${this._tmp.newNode.targetNodeID}, ${this._tmp.newNode.linkType})`);
+		log.DEBUG(`eventDragEndCircle(${this._tmp.newNode.sourceNodeID}, ${this._tmp.newNode.targetNodeID}, ${this._tmp.newNode.linkType})`);
 		if (this._tmp.newNode.targetNodeID !== null) {
 			if (this._tmp.newNode.targetNodeID === -1) {
 				$(`#search-${this.datasetKey}-${this.viewKey}`).select2("open");

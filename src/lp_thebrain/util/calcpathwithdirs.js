@@ -1,4 +1,4 @@
-import {log, loginc, logdec, ERROR, WARNING, INFO, DEBUG} from "../../common/util/log";
+import {log} from "../../common/util/log";
 
 
 // Creates a curved (diagonal) path from parent to the child node or between friend nodes
@@ -51,7 +51,7 @@ function calcPathWithDirs(sx, sy, sw, sh, tx, ty, tw, th, type, margo) {
 	};
 
 
-	//log(DEBUG, `calcPathWithDirs(${sx},${sy},${sw},${sh},${tx},${ty},${tw},${th},${type},${margo})(${sourcePoint+c1Point+c2Point+targetPoint})`);
+	//log.DEBUG(`calcPathWithDirs(${sx},${sy},${sw},${sh},${tx},${ty},${tw},${th},${type},${margo})(${sourcePoint+c1Point+c2Point+targetPoint})`);
 	return (sourcePoint+c1Point+c2Point+targetPoint);
 };
 

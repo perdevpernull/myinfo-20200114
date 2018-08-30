@@ -81,8 +81,8 @@ var layout_thebrain = {
 		layout_thebrain.datasetTmp.childzone = {x: x, y: y+2*h/3, w: w, h: h/3};
 		layout_thebrain.datasetTmp.placeholderx = (layout_thebrain.datasetTmp.actualzone.x + layout_thebrain.datasetTmp.actualzone.w/2);
 		layout_thebrain.datasetTmp.placeholdery = (layout_thebrain.datasetTmp.actualzone.y + layout_thebrain.datasetTmp.actualzone.h/2);
-		log(DEBUG, `x: ${x}, y: ${y}, w: ${w}, h: ${h}`);
-		log(DEBUG, `placeholderx: ${layout_thebrain.datasetTmp.placeholderx}, placeholdery: ${layout_thebrain.datasetTmp.placeholdery}`);
+		log.DEBUG(`x: ${x}, y: ${y}, w: ${w}, h: ${h}`);
+		log.DEBUG(`placeholderx: ${layout_thebrain.datasetTmp.placeholderx}, placeholdery: ${layout_thebrain.datasetTmp.placeholdery}`);
 	},
 
 	calcVisiblesPositions: function() {
@@ -113,7 +113,7 @@ var layout_thebrain = {
 				numOfCols = Math.max(Math.ceil(layout_thebrain.datasetTmp.visibles.parents.length / numInOneCol),2);
 			};
 			neededHeight = Math.ceil(layout_thebrain.datasetTmp.visibles.parents.length / numOfCols) * nodeHeight;
-			log(DEBUG, `numInOneCol(${numInOneCol}), numOfCols(${numOfCols})`);
+			log.DEBUG(`numInOneCol(${numInOneCol}), numOfCols(${numOfCols})`);
 			for (i = 0; i < layout_thebrain.datasetTmp.visibles.parents.length; i++) {
 				nodeID = layout_thebrain.datasetTmp.visibles.parents[i];
 				if (!layout_thebrain.datasetTmp.nodes[`ID${nodeID}`]) {
@@ -166,7 +166,7 @@ var layout_thebrain = {
 	},
 
 	initLayout: function(width, height) {
-		log(DEBUG, `initLayout( width: ${width}, height: ${height})`);
+		log.DEBUG(`initLayout( width: ${width}, height: ${height})`);
 		// inserting keypress listener on body
 			d3.select("body")
 			.on("keydown", layout_thebrain.eventKeydownBody)
@@ -254,7 +254,7 @@ var layout_thebrain = {
 									} else if (layout_thebrain.datasetTmp.newNode.linkType === "parent") {
 										newNodeID = dataset.addParentNode( layout_thebrain.datasetTmp.newNode.sourceNodeID, e.object.text);
 									} else if (layout_thebrain.datasetTmp.newNode.linkType === "child") {
-										log(DEBUG, `e.val(${e.val}), e.object.text(${e.object.text})`);
+										log.DEBUG(`e.val(${e.val}), e.object.text(${e.object.text})`);
 										newNodeID = dataset.addChildNode( layout_thebrain.datasetTmp.newNode.sourceNodeID, e.object.text);
 									};
 									layout_thebrain.drawVisibles(layout_thebrain.datasetTmp.newNode.sourceNodeID);
@@ -353,7 +353,7 @@ var layout_thebrain = {
 	},
 
 	drawVisibles: function(nodeID) {
-		log(DEBUG, `clicked(${nodeID})`);
+		log.DEBUG(`clicked(${nodeID})`);
 
 		layout_thebrain.dataset.selectedNodeID = nodeID;
 
@@ -367,7 +367,7 @@ var layout_thebrain = {
 		// A kattintás után látható elmek kikeresése és pozíciójuk meghatározása
 			layout_thebrain.datasetTmp.visibles = layout_thebrain.findVisibles(layout_thebrain.dataset.selectedNodeID);
 			layout_thebrain.calcVisiblesPositions();
-			log(DEBUG, "Visible nodeIDs: " + JSON.stringify(layout_thebrain.datasetTmp.visibles.nodes));
+			log.DEBUG("Visible nodeIDs: " + JSON.stringify(layout_thebrain.datasetTmp.visibles.nodes));
 
 		// Placeholder mozgaása
 			if (layout_thebrain.datasetTmp.nodes[`ID${layout_thebrain.dataset.selectedNodeID}`].x0) {
@@ -393,7 +393,7 @@ var layout_thebrain = {
 						.style("fill-opacity", function(d) {
 							var node = layout_thebrain.getNode(d);
 							//ToDo: Itt valami hiba van. Ha a friendNode-ra eltérő fill-opacity-t állítok, akkor a módosításkor elrontja.
-							//log(DEBUG, `d(${d}) ${node.class}Opacity(${layout_thebrain.dataset.preferences.node[node.class+"Opacity"]})`);
+							//log.DEBUG(`d(${d}) ${node.class}Opacity(${layout_thebrain.dataset.preferences.node[node.class+"Opacity"]})`);
 							return layout_thebrain.dataset.preferences.node[node.class+"Opacity"];
 						})
 				;
@@ -439,7 +439,7 @@ var layout_thebrain = {
 					.remove()
 				;
 
-		//log(DEBUG, JSON.stringify(layout_thebrain.datasetTmp.visibles.links));
+		//log.DEBUG(JSON.stringify(layout_thebrain.datasetTmp.visibles.links));
 
 		// Változások lekérdezése és átrajzolás (links)
 			var tmpLinks = svgLinks.selectAll("path")
@@ -497,7 +497,7 @@ var layout_thebrain = {
 							layout_thebrain.datasetTmp.nodes[`ID${d.target}`].width, layout_thebrain.datasetTmp.nodes[`ID${d.target}`].height,
 							d["type"]
 						);
-						//log(DEBUG, `source(${d.source}), target(${d.target}), type(${d["type"]}), path(${path})` );
+						//log.DEBUG(`source(${d.source}), target(${d.target}), type(${d["type"]}), path(${path})` );
 						return calcPathWithDirs(
 							layout_thebrain.datasetTmp.nodes[`ID${d.source}`].x0, layout_thebrain.datasetTmp.nodes[`ID${d.source}`].y0,
 							layout_thebrain.datasetTmp.nodes[`ID${d.source}`].width, layout_thebrain.datasetTmp.nodes[`ID${d.source}`].height,
@@ -601,7 +601,7 @@ var layout_thebrain = {
 			.on("mouseenter", layout_thebrain.eventMouseenterNode)
 			.on("mouseleave", layout_thebrain.eventMouseleaveNode)
 			.on("click", function(d) {
-				log(DEBUG, `eventClickNode(${d})`);
+				log.DEBUG(`eventClickNode(${d})`);
 				layout_thebrain.drawVisibles(d);
 			})
 		;
@@ -797,7 +797,7 @@ var layout_thebrain = {
 
 					if (newNodesDataVisible.indexOf(toNodeID) >= 0) {
 						var type = allLinks[j].type;
-						//log(DEBUG, `fromNodeID(${fromNodeID}), toNodeID(${toNodeID}), type(${type})`);
+						//log.DEBUG(`fromNodeID(${fromNodeID}), toNodeID(${toNodeID}), type(${type})`);
 						if (fromNodeID <= toNodeID) {
 							linkID = "source:"+fromNodeID+"-target:"+toNodeID;
 							link = { id: linkID, source: fromNodeID, target: toNodeID, type: type};
@@ -883,41 +883,41 @@ var layout_thebrain = {
 
 
 	eventKeydownBody: function() {
-		//log(DEBUG, `d3.event.key(${d3.event.key})`);
+		//log.DEBUG(`d3.event.key(${d3.event.key})`);
 		switch (d3.event.key) {
 			case "ArrowDown":
 				if (d3.event.ctrlKey) {
-					log(DEBUG, "CTRL+ArrowDown");
+					log.DEBUG("CTRL+ArrowDown");
 					layout_thebrain.addChild();
 				} else {
-					log(DEBUG, "ArrowDown");
+					log.DEBUG("ArrowDown");
 				};
 				break;
 			case "Insert":
-				log(DEBUG, `d3.event.key(${d3.event.key})`)
+				log.DEBUG(`d3.event.key(${d3.event.key})`)
 				layout_thebrain.addChild();
 				break;
 			case "ArrowUp":
 				if (d3.event.ctrlKey) {
-					log(DEBUG, "CTRL+ArrowUp");
+					log.DEBUG("CTRL+ArrowUp");
 					layout_thebrain.addParent();
 				} else {
-					log(DEBUG, "ArrowUp");
+					log.DEBUG("ArrowUp");
 				};
 				break;
 			case "ArrowLeft":
 				if (d3.event.ctrlKey) {
-					log(DEBUG, "CTRL+ArrowLeft");
+					log.DEBUG("CTRL+ArrowLeft");
 					layout_thebrain.addFriend();
 				} else {
-					log(DEBUG, "ArrowLeft");
+					log.DEBUG("ArrowLeft");
 				};
 				break;
 			case "s":
 				if (d3.event.ctrlKey) {
 					// ToDo: Ezeket a globális shortcut-okat ki kell majd tanni a
 					//    myinfo.js-be, ez ugyanis a program főmenüjéhez tartozik.
-					log(DEBUG, "CTRL+s");
+					log.DEBUG("CTRL+s");
 					d3.event.preventDefault();
 					var dataToBeSaved = dataset.getDatasetJson();
 
@@ -931,27 +931,27 @@ var layout_thebrain = {
 						contentType: "application/json; charset=utf-8",
 						dataType: "json",
 						success: function( response ) {
-							log(DEBUG, 'response('+response+')');
+							log.DEBUG('response('+response+')');
 						}
 					} );
 				} else {
-					log(DEBUG, "s");
+					log.DEBUG("s");
 				};
 				break;
 			case "Delete":
-				log(DEBUG, "Delete");
+				log.DEBUG("Delete");
 
 				layout_thebrain.deleteNode(layout_thebrain.dataset.selectedNodeID)
 				break;
 			default:
-				log(DEBUG, d3.event.key);
+				log.DEBUG(d3.event.key);
 		};
 	},
 
 
 
 	eventMouseenterNode: function(nodeID) {
-		log(DEBUG, `eventMouseenterNode(${nodeID},${d3.select(this).attr("class")})`);
+		log.DEBUG(`eventMouseenterNode(${nodeID},${d3.select(this).attr("class")})`);
 		d3.selectAll(`#node_${nodeID}`).select(".rectangle")
 			.style("stroke-width", 3)
 		;
@@ -974,7 +974,7 @@ var layout_thebrain = {
 	},
 
 	eventMouseleaveNode: function(nodeID) {
-		//log(DEBUG, `eventMouseleaveNode(${nodeID})`);
+		//log.DEBUG(`eventMouseleaveNode(${nodeID})`);
 		d3.selectAll(`#node_${nodeID}`).select(".rectangle")
 			.style("stroke-width", 1)
 		;
@@ -996,14 +996,14 @@ var layout_thebrain = {
 
 
 	eventDragStartCircle: function(nodeID) {
-		log(DEBUG, `eventDragStartCircle(${nodeID},${d3.select(this).attr("class")})`);
+		log.DEBUG(`eventDragStartCircle(${nodeID},${d3.select(this).attr("class")})`);
 
 		layout_thebrain.datasetTmp.viewMode = "insert";
 		layout_thebrain.datasetTmp.newNode.linkType = d3.select(this).attr("class");
 	},
 
 	eventDragDragCircle: function(nodeID) {
-		//log(DEBUG, `eventDragDragCircle.target(${d3.select(this).attr("class")})`);
+		//log.DEBUG(`eventDragDragCircle.target(${d3.select(this).attr("class")})`);
 		var dragcircle = d3.select("#dragcircle");
 		var dragpath = d3.select("#dragpath");
 
@@ -1138,7 +1138,7 @@ var layout_thebrain = {
 	},
 
 	eventDragEndCircle: function(nodeID) {
-		//log(DEBUG, `eventDragEndCircle(${layout_thebrain.datasetTmp.newNode.sourceNodeID}, ${layout_thebrain.datasetTmp.newNode.targetNodeID}, ${layout_thebrain.datasetTmp.newNode.linkType})`);
+		//log.DEBUG(`eventDragEndCircle(${layout_thebrain.datasetTmp.newNode.sourceNodeID}, ${layout_thebrain.datasetTmp.newNode.targetNodeID}, ${layout_thebrain.datasetTmp.newNode.linkType})`);
 		if (layout_thebrain.datasetTmp.newNode.targetNodeID !== null) {
 			if (layout_thebrain.datasetTmp.newNode.targetNodeID === -1) {
 				$("#search").select2("open");
@@ -1189,7 +1189,7 @@ var layout_thebrain = {
 				layout_thebrain.datasetTmp.history = layout_thebrain.datasetTmp.history.slice(0,i);
 			};
 		};
-		log(DEBUG, `history(${JSON.stringify(layout_thebrain.datasetTmp.history)})`);
+		log.DEBUG(`history(${JSON.stringify(layout_thebrain.datasetTmp.history)})`);
 		var tmpNodes = svgHistory.selectAll("g")
 			.data(layout_thebrain.datasetTmp.history.slice(1,layout_thebrain.datasetTmp.history.length) , function(d) {return d; })
 		;
@@ -1200,7 +1200,7 @@ var layout_thebrain = {
 					.style("fill-opacity", function(d) {
 						var node = layout_thebrain.getNode(d);
 						//ToDo: Itt valami hiba van. Ha a friendNode-ra eltérő fill-opacity-t állítok, akkor a módosításkor elrontja.
-						//log(DEBUG, `d(${d}) ${node.class}Opacity(${layout_thebrain.dataset.preferences.node[node.class+"Opacity"]})`);
+						//log.DEBUG(`d(${d}) ${node.class}Opacity(${layout_thebrain.dataset.preferences.node[node.class+"Opacity"]})`);
 						return layout_thebrain.dataset.preferences.node[node.class+"Opacity"];
 					})
 			;

@@ -1,4 +1,4 @@
-import {log, loginc, logdec, ERROR, WARNING, INFO, DEBUG} from "../common/util/log";
+import {log} from "../common/util/log";
 
 // This is the LayoutPlugin interface.
 class LayoutPlugin {
@@ -10,23 +10,23 @@ class LayoutPlugin {
 	};
 
 	constructLayout() {
-		log(ERROR, "LayoutPlugin.constructLayout()");
+		log.ERROR("LayoutPlugin.constructLayout()");
 	};
 
 	destructLayout() {
-		log(ERROR, "LayoutPlugin.destructLayout()");
+		log.ERROR("LayoutPlugin.destructLayout()");
 	};
 
 	resizeLayout() {
-		log(ERROR, "LayoutPlugin.resizeLayout()");
+		log.ERROR("LayoutPlugin.resizeLayout()");
 	};
 
 	refreshLayout() {
-		log(ERROR, "LayoutPlugin.refreshLayout()");
+		log.ERROR("LayoutPlugin.refreshLayout()");
 	};
 
 	eventListenerKeydown() {
-		log(ERROR, "LayoutPlugin.eventListenerKeydown()");
+		log.ERROR("LayoutPlugin.eventListenerKeydown()");
 	};
 };
 

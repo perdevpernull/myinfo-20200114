@@ -1,42 +1,42 @@
-import {log, loginc, logdec, ERROR, WARNING, INFO, DEBUG} from "../../common/util/log";
+import {log} from "../../common/util/log";
 
 
 class UserData {
 	constructor(jsonData) {
-		loginc();
-		log(DEBUG, `UserData.constructor(${jsonData})`);
+		log.loginc();
+		log.DEBUG(`UserData.constructor(${jsonData})`);
 		if (jsonData === null) {
 			this._data = {msg: "You have to initialize first!"};
 		} else {
 			this._data = jsonData;
 		};
-		logdec();
+		log.logdec();
 	};
 
 	getJsonData() {
-		loginc();
-		log(DEBUG, `UserData.getJsonData()`);
-		logdec();
+		log.loginc();
+		log.DEBUG(`UserData.getJsonData()`);
+		log.logdec();
 		return JSON.stringify(this._data);
 	};
 
 	getDatasets() {
-		loginc();
-		log(DEBUG, `UserData.getDatasets()`);
-		logdec();
+		log.loginc();
+		log.DEBUG(`UserData.getDatasets()`);
+		log.logdec();
 		return this._data.datasets;
 	};
 
 	getDataset(datasetKey) {
-		loginc();
-		log(DEBUG, `UserData.getDataset(${datasetKey})`);
-		logdec();
+		log.loginc();
+		log.DEBUG(`UserData.getDataset(${datasetKey})`);
+		log.logdec();
 		return this._data.datasets[datasetKey];
 	};
 
 	addDataset(datasetTitle, datasetDescription, datasetLink) {
-		loginc();
-		log(DEBUG, `UserData.addDataset(${datasetTitle},${datasetDescription},${datasetLink})`);
+		log.loginc();
+		log.DEBUG(`UserData.addDataset(${datasetTitle},${datasetDescription},${datasetLink})`);
 		var datasetID = this._data.nextDatasetID;
 		var datasetKey = "ID"+datasetID;
 		this._data.nextDatasetID = this._data.nextDatasetID + 1;
@@ -73,22 +73,22 @@ class UserData {
 				}
 			}
 		};
-		logdec();
+		log.logdec();
 		return datasetKey;
 	};
 
 	getDatasetInstance(datasetKey) {
-		loginc();
-		log(DEBUG, `UserData.getDatasetInstance(${datasetKey})`);
-		logdec();
+		log.loginc();
+		log.DEBUG(`UserData.getDatasetInstance(${datasetKey})`);
+		log.logdec();
 		return this._data.datasets[datasetKey].instance;
 	};
 
 	setDatasetInstance(datasetKey, datasetInstance) {
-		loginc();
-		log(INFO, `UserData.setDatasetInstance(${datasetKey})`);
+		log.loginc();
+		log.INFO(`UserData.setDatasetInstance(${datasetKey})`);
 		this._data.datasets[datasetKey].instance = datasetInstance;
-		logdec();
+		log.logdec();
 	};
 
 	getView(datasetKey, viewKey) {
@@ -103,7 +103,7 @@ class UserData {
 		if (view) {
 			view.instance = layoutPluginInstance;
 		} else {
-			log(ERROR, `UserData.setLayoutPluginInstance(${datasetKey},${viewKey}) not exists`);
+			log.ERROR(`UserData.setLayoutPluginInstance(${datasetKey},${viewKey}) not exists`);
 		};
 	};
 

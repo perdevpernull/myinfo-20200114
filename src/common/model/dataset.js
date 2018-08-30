@@ -1,4 +1,4 @@
-import {log, loginc, logdec, ERROR, WARNING, INFO, DEBUG} from "../util/log";
+import {log} from "../util/log";
 var undefined;
 
 
@@ -466,7 +466,7 @@ class Dataset {
 	};
 
 	hasFriendLinks(nodeID) {
-		//log(DEBUG, `nodeID(${nodeID}).hasFriendLinks() = ${(this.getFriendLinks(nodeID).length > 0)}`);
+		//log.DEBUG(`nodeID(${nodeID}).hasFriendLinks() = ${(this.getFriendLinks(nodeID).length > 0)}`);
 		return (this.getFriendLinks(nodeID).length > 0);
 	};
 
