@@ -1,10 +1,10 @@
-import {log, loginc, logdec, ERROR, WARNING, INFO, DEBUG} from "./log";
+import {log} from "./log";
 
 
 function loadJson(jsonFile, callback) {
-	loginc();
-	log(DEBUG, `loadJson(${jsonFile})`);
-	logdec();
+	log.loginc();
+	log.DEBUG(`loadJson(${jsonFile})`);
+	log.logdec();
 	d3.json(jsonFile, function(error, data) {
 		if (error) throw error;
 

@@ -1,4 +1,4 @@
-import {setLogLevel, log, loginc, logdec, ERROR, WARNING, INFO, DEBUG} from "../common/util/log";
+import {log} from "../common/util/log";
 import {loadJson} from "../common/util/loadjson";
 import {loadPlugins} from "../common/util/loadplugins";
 import {Settings} from "./model/settings";
@@ -13,7 +13,7 @@ class MyInfo {
 		if (_this === null) {
 			_this = this;
 			// Initial settings
-			setLogLevel(DEBUG);
+			log.setLogLevel(log.lvl_DEBUG);
 
 			if (domID === null) {
 				_this.mainDomID = "#myinfo";
@@ -21,22 +21,22 @@ class MyInfo {
 				_this.mainDomID = domID;
 			};
 	
-			log(INFO, `MyInfo.constructor(${_this.mainDomID})`);
+			log.INFO(`MyInfo.constructor(${_this.mainDomID})`);
 		
 			loadJson("/api/v1/settings", function(json) {
-				log(INFO, "Settings.json loaded");
+				log.INFO("Settings.json loaded");
 				_this.settings = new Settings(json);
 
 				var dataPlugins = _this.settings.getDataPlugins();
 				loadPlugins(dataPlugins, function() {
-					log(INFO, "dataPlugins loaded");
+					log.INFO("dataPlugins loaded");
 					
 					var layoutPlugins = _this.settings.getLayoutPlugins();
 					loadPlugins(layoutPlugins, function() {
-						log(INFO, "layoutPlugins loaded");
+						log.INFO("layoutPlugins loaded");
 						
 						loadJson("/api/v1/userdata", function(json) {
-							log(INFO, "UserData.json loaded");
+							log.INFO("UserData.json loaded");
 							_this.userData = new UserData(json);
 							
 							_this.ui = new UI(_this.mainDomID);
@@ -46,7 +46,7 @@ class MyInfo {
 				});
 			});
 		} else {
-			log(ERROR, "Settings is already created (singleton)");
+			log.ERROR("Settings is already created (singleton)");
 		};
 	};
 
@@ -59,12 +59,12 @@ class MyInfo {
 	};
 
 	refreshHome() {
-		log(DEBUG, `MyInfo.refreshHome()`);
+		log.DEBUG(`MyInfo.refreshHome()`);
 		this.ui.refreshHome(this.userData.getDatasets());
 	};
 	
 	openDataset(datasetKey, viewKey) {
-		log(DEBUG, `MyInfo.openDataset(${datasetKey},${viewKey})`);
+		log.DEBUG(`MyInfo.openDataset(${datasetKey},${viewKey})`);
 		if (datasetKey === "OpenNew") {
 			// ToDo: meg kell írni.
 		} else if (datasetKey === "CreateNew") {
@@ -74,7 +74,7 @@ class MyInfo {
 			if (dataset) {
 				if (!dataset.tabIndex) {
 					loadJson(dataset.link, function(json) {
-						log(INFO, `${dataset.link} loaded`);
+						log.INFO(`${dataset.link} loaded`);
 	
 						var datasetInstance = new Dataset(json);
 						_this.userData.setDatasetInstance(datasetKey, datasetInstance);
@@ -99,10 +99,10 @@ class MyInfo {
 					});
 				} else {
 					_this.ui.activateMenuAndWs(dataset.tabIndex);
-					log(DEBUG, "Already open");
+					log.DEBUG("Already open");
 				};
 			} else {
-				log(ERROR, "Nonexistent");
+				log.ERROR("Nonexistent");
 			};
 		};
 	};

@@ -5,7 +5,7 @@
 
 // ToDo: a code (pl.: layoutPlugins[key].code) helyett key-t használni.
 
-import {log, ERROR, WARNING, INFO, DEBUG} from "../common/util/log"
+import {log} from "../common/util/log"
 var undefined;
 
 var preferences = {
@@ -33,7 +33,7 @@ var config = {
 			config.dataset.layoutModules[layoutModuleIndex].resize = resizeFunc;
 			config.dataset.layoutModules[layoutModuleIndex].destroy = destroyFunc;
 		} else {
-			log(DEBUG, `FAILED: setLayoutModuleFunctions(${layoutModuleCode}, init, refresh)`);
+			log.DEBUG(`FAILED: setLayoutModuleFunctions(${layoutModuleCode}, init, refresh)`);
 		};
 	},
 

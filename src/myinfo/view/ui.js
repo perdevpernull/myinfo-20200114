@@ -1,4 +1,4 @@
-import {log, ERROR, WARNING, INFO, DEBUG} from "../../common/util/log";
+import {log} from "../../common/util/log";
 import {autosize} from "../../common/util/autosize";
 
 
@@ -115,7 +115,7 @@ class UIHome {
 
 		$("#modal-delete").click( function() {
 			// ToDo: Törölni az adatbázisból az adott dataset-et.
-			log(INFO, "Deleted");
+			log.INFO("Deleted");
 			myinfo.refreshHome();
 		});
 	};
@@ -200,11 +200,11 @@ class UI {
 
 		// ToDo: ezt itt kupucolni.
 		$("#ws-home-tab").on("show.bs.pill", function (e) {
-			log(INFO, "Helló-belló!");
+			log.INFO("Helló-belló!");
 			myinfo.refreshHome();
 		});
 		$("#sidebar-toggler").click( function() {
-			log(INFO, "Helló-belló2!");
+			log.INFO("Helló-belló2!");
 			myinfo.refreshHome();
 		});
 	};
