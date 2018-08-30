@@ -233,7 +233,14 @@ class UI {
 			lp_instance.refreshLayout();
 		});*/
 
+		// Activate the newly added tab
+		this.activateMenuAndWs(index);
+
 		return index;
+	};
+
+	activateMenuAndWs(index) {
+		$(`#menu li:eq(${index}) a`).tab('show');
 	};
 
 	deleteMenuAndWs(datasetKey) {

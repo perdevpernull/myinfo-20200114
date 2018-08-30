@@ -83,8 +83,6 @@ class MyInfo {
 						viewKey = "ID"+view.ID;
 	
 						dataset.tabIndex = _this.ui.addMenuAndWs(datasetKey, `${dataset.title}:${view.title}`);
-						// Activate the newly added tab
-						$(`#menu li:eq(${dataset.tabIndex}) a`).tab('show');
 	
 						var lp_instance = _this.userData.getLayoutPluginInstance(datasetKey, viewKey);
 						if (!lp_instance) {
@@ -100,7 +98,7 @@ class MyInfo {
 						_this.ui.refreshHome(_this.userData.getDatasets());
 					});
 				} else {
-					$(`#menu li:eq(${dataset.tabIndex}) a`).tab('show');
+					_this.ui.activateMenuAndWs(dataset.tabIndex);
 					log(DEBUG, "Already open");
 				};
 			} else {
