@@ -22,9 +22,10 @@ class MyInfo {
 			};
 	
 			log.INFO(`MyInfo.constructor(${_this.mainDomID})`);
-		
-			loadJson("/api/v1/settings", function(json) {
-				log.INFO("Settings.json loaded");
+
+			loadJson("/api/v1/settings")
+			.then( function(json) {
+					log.INFO("Settings.json loaded");
 				_this.settings = new Settings(json);
 
 				var dataPlugins = _this.settings.getDataPlugins();
@@ -35,7 +36,8 @@ class MyInfo {
 					loadPlugins(layoutPlugins, function() {
 						log.INFO("layoutPlugins loaded");
 						
-						loadJson("/api/v1/userdata", function(json) {
+						loadJson("/api/v1/userdata")
+						.then( function(json) {
 							log.INFO("UserData.json loaded");
 							_this.userData = new UserData(json);
 							
@@ -73,7 +75,8 @@ class MyInfo {
 			var dataset = _this.userData.getDataset(datasetKey);
 			if (dataset) {
 				if (!dataset.tabIndex) {
-					loadJson(dataset.link, function(json) {
+					loadJson(dataset.link)
+					.then( function(json) {
 						log.INFO(`${dataset.link} loaded`);
 	
 						var datasetInstance = new Dataset(json);
@@ -116,6 +119,10 @@ class MyInfo {
 		_this.settings.registerLayoutPlugin(layoutPluginKey, layoutPluginClass);
 	};
 	
+	test() {
+		log.DEBUG("test() START");
+		log.DEBUG("test() END");
+	};
 };
 
 

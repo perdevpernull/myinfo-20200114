@@ -1,15 +1,15 @@
 import {log} from "./log";
 
 
-function loadJson(jsonFile, callback) {
+function loadJson(jsonFile) {
 	log.loginc();
 	log.DEBUG(`loadJson(${jsonFile})`);
 	log.logdec();
-	d3.json(jsonFile, function(error, data) {
-		if (error) throw error;
-
-		callback(data);
-	});
+	return fetch(jsonFile)
+		.then( function(response) {
+			if (!response.ok) throw new Error(response.status + " " + response.statusText);
+			return response.json();
+		});
 };
 
 
