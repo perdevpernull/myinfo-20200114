@@ -67,3 +67,5 @@ typings/
 .env
 
 stats.json
+public/settings.2018*.json
+public/default@myinfo.local/dataset-ID*/dataset-ID*.2018*.json
