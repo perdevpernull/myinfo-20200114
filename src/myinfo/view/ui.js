@@ -178,6 +178,11 @@ class UIHome {
 class UI {
 	constructor(domID) {
 		var str = `
+			<div id="debug-area" class="row p-2">
+				<button type="button" class="btn btn-primary" onClick="myinfo.test()">myinfo.test()</button>
+				<button type="button" class="btn btn-primary invisible" onClick="myinfo.test2()">myinfo.test2()</button>
+				<button type="button" class="btn btn-primary" onClick="myinfo.test3()">myinfo.test3()</button>
+			</div>
 			<div id="menu-bar" class="row p-2">
 				<button id="sidebar-toggler" type="button" class="btn btn-light">
 					<span class="navbar-toggler-icon">
