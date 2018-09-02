@@ -18,9 +18,9 @@ app.use(session({
   	saveUninitialized: true,
     secret: 'mysecret'
 }));
-app.get("/", function(req, res, next) {
+app.all("/*", function(req, res, next) {
 	if (req.session.userID) {
-		console.log(`Already logged in: req.session.userID: ${req.session.userID}`);
+		console.log(`Already logged in: req.session.userID: ${req.session.userID} (${JSON.stringify(req.params)})`);
 		next();
 	} else {
 		// ToDo: Redirecting to a login page.
