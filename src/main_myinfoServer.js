@@ -1,6 +1,7 @@
 var express = require("express");
 var session = require('express-session');
 var MemoryStore = require('memorystore')(session);
+var bodyParser = require('body-parser');
 
 var apiHandler = require("./myinfoServer/api/apiHandler.js");
 
@@ -18,6 +19,7 @@ app.use(session({
   	saveUninitialized: true,
     secret: 'mysecret'
 }));
+app.use(bodyParser());
 app.all("/*", function(req, res, next) {
 	if (req.session.userID) {
 		console.log(`Already logged in: req.session.userID: ${req.session.userID} (${JSON.stringify(req.params)})`);

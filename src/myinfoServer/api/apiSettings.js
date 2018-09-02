@@ -7,11 +7,16 @@ module.exports = function apiSettings(req, res, next) {
             switch (req.method) {
                 case "GET":
                     // ToDo: put base_dir into some config file.
-                    res.sendFile(base_dir+"/"+"settings.json");
-                    console.log(`settings: GET (${base_dir+"/"+"settings.json"})`);
+                    var files = fs.readdirSync(base_dir).filter(item => (item.slice(0,8) === "settings")).sort().reverse();
+                    res.sendFile(base_dir+"/"+files[0]);
+                    console.log(`settings: GET (${base_dir+"/"+files[0]})`);
                     break;
-                case "PUT":
-                    console.log(`settings: PUT`);
+                case "POST":
+                    var data = JSON.stringify(req.body);
+                    var now = new Date().toJSON().replace(/:/g,"").replace(/-/g,"");
+                    fs.writeFileSync(base_dir+"/settings."+now+".json", data);
+                    console.log(`settings: POST`);
+                    res.sendStatus(200);
                     break;
                 default:
                     console.log(`settings: Method UNKNOWN (${req.method})`);

@@ -1,5 +1,6 @@
 import {log} from "../common/util/log";
 import {loadJson} from "../common/util/loadjson";
+import {postJson} from "../common/util/postjson";
 import {loadPlugins} from "../common/util/loadplugins";
 import {Settings} from "./model/settings";
 import {UserData} from "./model/userdata";
@@ -53,7 +54,16 @@ class MyInfo {
 	};
 
 	saveSettings() {
-		// ToDo: meg kell írni.
+		log.DEBUG(`MyInfo.saveSettings()`);
+		postJson("/api/v1/settings", _this.settings.getJsonData())
+		.then( function(data) {
+			if( data.status != 200) {
+				log.DEBUG(`MyInfo.saveSettings().error(${data.status})`);
+			} else {
+				log.DEBUG(`MyInfo.saveSettings().success`);
+			};
+		})
+		.catch(error => console.error(error));
 	};
 
 	loadUserData() {
@@ -110,6 +120,20 @@ class MyInfo {
 		};
 	};
 	
+	saveDataset(datasetKey) {
+		log.DEBUG(`MyInfo.saveDataset(${datasetKey})`);
+		var dataset = _this.userData.getDataset(datasetKey);
+		postJson(dataset.link, dataset.instance.getJsonData())
+		.then( function(data) {
+			if( data.status != 200) {
+				log.DEBUG(`MyInfo.saveDataset(${datasetKey}).error(${data.status})`);
+			} else {
+				log.DEBUG(`MyInfo.saveDataset(${datasetKey}).success`);
+			};
+		})
+		.catch(error => console.error(error));
+	};
+
 	registerDataPlugin(dataPluginKey, dataPluginInstall) { //, dataPluginClass) {
 		dataPluginInstall(Dataset);
 		_this.settings.registerDataPlugin(dataPluginKey); //, dataPluginClass);
@@ -121,6 +145,7 @@ class MyInfo {
 	
 	test() {
 		log.DEBUG("test() START");
+		this.saveSettings();
 		log.DEBUG("test() END");
 	};
 };

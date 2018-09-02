@@ -7,11 +7,17 @@ module.exports = function apiDataset(req, res, next) {
             switch (req.method) {
                 case "GET":
                     // ToDo: put base_dir into some config file.
-                    res.sendFile(base_dir+"/"+req.session.userID+"/"+req.query.name+"/"+req.query.name+".json");
+                    var files = fs.readdirSync(base_dir+"/"+req.session.userID+"/"+req.query.name).sort().reverse();
+
+                    res.sendFile(base_dir+"/"+req.session.userID+"/"+req.query.name+"/"+files[0]);
                     console.log(`dataset: GET`);
                     break;
-                case "PUT":
-                    console.log(`dataset: PUT`);
+                case "POST":
+                    var data = JSON.stringify(req.body);
+                    var now = new Date().toJSON().replace(/:/g,"").replace(/-/g,"");
+                    fs.writeFileSync(base_dir+"/"+req.session.userID+"/"+req.query.name+"/"+req.query.name+"."+now+".json", data);
+                    console.log(`dataset: POST`);
+                    res.sendStatus(200);
                     break;
                 default:
                     console.log(`dataset: Method UNKNOWN (${req.method})`);

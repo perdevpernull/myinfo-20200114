@@ -9,9 +9,21 @@ class Settings {
 			this._data = {msg: "You have to initialize first!"};
 		} else {
 			this._data = jsonData;
+			this._initRegistrations();
 		};
 		log.DEBUG(JSON.stringify(this._data));
 		log.logdec();
+	};
+
+	_initRegistrations() {
+		// Clear DataPlugin registrations
+		for (var dataPluginKey in this._data.dataPlugins) {
+			this._data.dataPlugins[dataPluginKey].registered = false;
+		};
+		// Clear LayoutPlugin registrations
+		for (var layoutPluginKey in this._data.layoutPlugins) {
+			this._data.layoutPlugins[layoutPluginKey].class = null;
+		};
 	};
 
 	getJsonData() {
