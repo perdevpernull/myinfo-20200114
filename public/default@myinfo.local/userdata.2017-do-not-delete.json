@@ -1,4 +1,4 @@
-{
+﻿{
 	"nextDatasetID": 2,
 	"datasets": {
 		"ID0": {
@@ -7,13 +7,11 @@
 			"title": "Dataset 1",
 			"description": "Some quick example text to build on the card title and make up the bulk of the card's content. And some text more just to see what happens when there is a lot of text in the description.",
 			"link": "/api/v1/dataset?name=dataset-ID0",
-			"tabIndex": null,
-			"instance": null,
 			"selectedViewIndex": 1,
 			"nextViewID": 2,
 			"views": {
 				"ID0": {
-					"ID": 0, "layoutPluginKey": "lp_thebrain", "title": "Default view", "instance": null,
+					"ID": 0, "layoutPluginKey": "lp_thebrain", "title": "Default view",
 					"viewData": {
 						"selectedNodeID": 0,
 						"animationDuration": 400,
@@ -33,7 +31,7 @@
 					}
 				},
 				"ID1": {
-					"ID": 1, "layoutPluginKey": "lp_thebrain", "title": "TheBrain view2", "instance": null,
+					"ID": 1, "layoutPluginKey": "lp_thebrain", "title": "TheBrain view2",
 					"viewData": {
 						"selectedNodeID": 1,
 						"animationDuration": 400,
@@ -60,13 +58,11 @@
 			"title": "Családfa",
 			"description": "Tesztlési céllal családfa adatok egy része.",
 			"link": "/api/v1/dataset?name=dataset-ID1",
-			"tabIndex": null,
-			"instance": null,
 			"selectedViewIndex": 0,
 			"nextViewID": 1,
 			"views": {
 				"ID0": {
-					"ID": 0, "layoutPluginKey": "lp_thebrain", "title": "Default view", "instance": null,
+					"ID": 0, "layoutPluginKey": "lp_thebrain", "title": "Default view",
 					"viewData": {
 						"selectedNodeID": 0,
 						"animationDuration": 400,

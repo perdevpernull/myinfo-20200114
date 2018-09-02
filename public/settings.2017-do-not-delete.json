@@ -1,8 +1,8 @@
 {
 	"dataPlugins": {
-		"dp_note": {"key": "dp_note", "link": "dp_note.js", "registered": false}
+		"dp_note": {"key": "dp_note", "link": "dp_note.js"}
 	},
 	"layoutPlugins": {
-		"lp_thebrain": {"key": "lp_thebrain", "link": "lp_thebrain.js", "class": null, "dpDependencies": ["dp_note"]}
+		"lp_thebrain": {"key": "lp_thebrain", "link": "lp_thebrain.js", "dpDependencies": ["dp_note"]}
 	}
 }

@@ -9,21 +9,10 @@ class Settings {
 			this._data = {msg: "You have to initialize first!"};
 		} else {
 			this._data = jsonData;
-			this._initRegistrations();
+			this._dataTmp = {dataPlugins: {}, layoutPlugins: {}};
 		};
 		log.DEBUG(JSON.stringify(this._data));
 		log.logdec();
-	};
-
-	_initRegistrations() {
-		// Clear DataPlugin registrations
-		for (var dataPluginKey in this._data.dataPlugins) {
-			this._data.dataPlugins[dataPluginKey].registered = false;
-		};
-		// Clear LayoutPlugin registrations
-		for (var layoutPluginKey in this._data.layoutPlugins) {
-			this._data.layoutPlugins[layoutPluginKey].class = null;
-		};
 	};
 
 	getJsonData() {
@@ -44,14 +33,24 @@ class Settings {
 		log.loginc();
 		log.INFO(`Settings.registerDataPlugin(${dataPluginKey})`);
 
-		if (this._data.dataPlugins[dataPluginKey].registered === false) {
+		if (this.getDataPluginRegistered(dataPluginKey) === false) {
 			log.DEBUG(`Settings.registerDataPlugin(${dataPluginKey}).registered(true)`);
-			this._data.dataPlugins[dataPluginKey].registered = true;
+			this._dataTmp.dataPlugins[dataPluginKey].registered = true;
 		} else {
 			log.ERROR(`Settings.registerDataPlugin(${dataPluginKey}).already_registered`);
 		};
 
 		log.logdec();
+	};
+
+	getDataPluginRegistered(dataPluginKey) {
+		log.loginc();
+		log.INFO(`Settings.getDataPluginRegistered(${dataPluginKey})`);
+		if (!this._dataTmp.dataPlugins[dataPluginKey]) {
+			this._dataTmp.dataPlugins[dataPluginKey] = {registered: false};
+		};
+		log.logdec();
+		return this._dataTmp.dataPlugins[dataPluginKey].registered;
 	};
 
 	getLayoutPlugins() {
@@ -64,9 +63,9 @@ class Settings {
 	registerLayoutPlugin(layoutPluginKey, layoutPluginClass) {
 		log.loginc();
 		log.INFO(`Settings.registerLayoutPlugin(${layoutPluginKey})`);
-		if (this._data.layoutPlugins[layoutPluginKey].class === null) {
+		if (this.getLayoutPluginClass(layoutPluginKey) === null) {
 			log.DEBUG(`Settings.registerLayoutPlugin(${layoutPluginKey}).class.registered`);
-			this._data.layoutPlugins[layoutPluginKey].class = layoutPluginClass;
+			this._dataTmp.layoutPlugins[layoutPluginKey].class = layoutPluginClass;
 		} else {
 			log.ERROR(`Settings.registerLayoutPlugin(${layoutPluginKey}).class.already_registered`);
 		}
@@ -76,15 +75,12 @@ class Settings {
 	getLayoutPluginClass(layoutPluginKey) {
 		log.loginc();
 		log.DEBUG(`Settings.getLayoutPluginClass(${layoutPluginKey})`);
-		if (this._data.layoutPlugins[layoutPluginKey].class) {
-			log.DEBUG(`Settings.getLayoutPluginClass(${layoutPluginKey}).returned`);
-			log.logdec();
-			return this._data.layoutPlugins[layoutPluginKey].class;
-		} else {
-			log.ERROR(`Settings.getLayoutPluginClass(${layoutPluginKey}).null`);
-			log.logdec();
-			return null;
+
+		if (!this._dataTmp.layoutPlugins[layoutPluginKey]) {
+			this._dataTmp.layoutPlugins[layoutPluginKey] = {class: null};
 		};
+		log.logdec();
+		return this._dataTmp.layoutPlugins[layoutPluginKey].class;
 	};
 };
 

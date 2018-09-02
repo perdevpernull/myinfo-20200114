@@ -26,7 +26,7 @@ class MyInfo {
 
 			loadJson("/api/v1/settings")
 			.then( function(json) {
-					log.INFO("Settings.json loaded");
+				log.INFO("Settings.json loaded");
 				_this.settings = new Settings(json);
 
 				var dataPlugins = _this.settings.getDataPlugins();
@@ -66,8 +66,17 @@ class MyInfo {
 		.catch(error => console.error(error));
 	};
 
-	loadUserData() {
-		//
+	saveUserData() {
+		log.DEBUG(`MyInfo.saveUserData()`);
+		postJson("/api/v1/userdata", _this.userData.getJsonData())
+		.then( function(data) {
+			if( data.status != 200) {
+				log.DEBUG(`MyInfo.saveUserData().error(${data.status})`);
+			} else {
+				log.DEBUG(`MyInfo.saveUserData().success`);
+			};
+		})
+		.catch(error => console.error(error));
 	};
 
 	refreshHome() {
@@ -84,7 +93,7 @@ class MyInfo {
 		} else {
 			var dataset = _this.userData.getDataset(datasetKey);
 			if (dataset) {
-				if (!dataset.tabIndex) {
+				if (!_this.userData.getDatasetTabIndex(datasetKey)) {
 					loadJson(dataset.link)
 					.then( function(json) {
 						log.INFO(`${dataset.link} loaded`);
@@ -95,7 +104,8 @@ class MyInfo {
 						var view = _this.userData.getView(datasetKey, viewKey);
 						viewKey = "ID"+view.ID;
 	
-						dataset.tabIndex = _this.ui.addMenuAndWs(datasetKey, `${dataset.title}:${view.title}`);
+						var tabIndex = _this.ui.addMenuAndWs(datasetKey, `${dataset.title}:${view.title}`);
+						_this.userData.setDatasetTabIndex(datasetKey, tabIndex);
 	
 						var lp_instance = _this.userData.getLayoutPluginInstance(datasetKey, viewKey);
 						if (!lp_instance) {
@@ -106,7 +116,6 @@ class MyInfo {
 	
 						// Időt kell hagyni az új tab megjelenésének (mert amíg nem jelent meg teljesen, addig a getBBox() fv nem működik.)
 						setTimeout(function(){ lp_instance.refreshLayout(); }, 1000);
-						//lp_instance.destructLayout();
 	
 						_this.ui.refreshHome(_this.userData.getDatasets());
 					});
@@ -122,8 +131,8 @@ class MyInfo {
 	
 	saveDataset(datasetKey) {
 		log.DEBUG(`MyInfo.saveDataset(${datasetKey})`);
-		var dataset = _this.userData.getDataset(datasetKey);
-		postJson(dataset.link, dataset.instance.getJsonData())
+		var datasetInstance = _this.userData.getDatasetInstance(datasetKey);
+		postJson(dataset.link, datasetInstance.getJsonData())
 		.then( function(data) {
 			if( data.status != 200) {
 				log.DEBUG(`MyInfo.saveDataset(${datasetKey}).error(${data.status})`);
@@ -145,7 +154,7 @@ class MyInfo {
 	
 	test() {
 		log.DEBUG("test() START");
-		this.saveSettings();
+		this.saveUserData();
 		log.DEBUG("test() END");
 	};
 };
