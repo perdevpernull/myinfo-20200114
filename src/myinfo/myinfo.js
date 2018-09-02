@@ -132,12 +132,14 @@ class MyInfo {
 	saveDataset(datasetKey) {
 		log.DEBUG(`MyInfo.saveDataset(${datasetKey})`);
 		var datasetInstance = _this.userData.getDatasetInstance(datasetKey);
-		postJson(dataset.link, datasetInstance.getJsonData())
+		var datasetLink = _this.userData.getDataset(datasetKey).link;
+		postJson(datasetLink, datasetInstance.getJsonData())
 		.then( function(data) {
 			if( data.status != 200) {
 				log.DEBUG(`MyInfo.saveDataset(${datasetKey}).error(${data.status})`);
 			} else {
 				log.DEBUG(`MyInfo.saveDataset(${datasetKey}).success`);
+				_this.saveUserData();
 			};
 		})
 		.catch(error => console.error(error));
@@ -154,7 +156,7 @@ class MyInfo {
 	
 	test() {
 		log.DEBUG("test() START");
-		this.saveUserData();
+		this.saveDataset("ID1");
 		log.DEBUG("test() END");
 	};
 };

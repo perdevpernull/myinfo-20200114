@@ -110,7 +110,7 @@ class UserData {
 
 	setLayoutPluginInstance(datasetKey, viewKey, layoutPluginInstance) {
 		if (!this.getLayoutPluginInstance(datasetKey, viewKey)) {
-			this._dataTmp.datasets[datasetKey].views[`ID${view.ID}`].instance = layoutPluginInstance;
+			this._dataTmp.datasets[datasetKey].views[viewKey].instance = layoutPluginInstance;
 		} else {
 			log.ERROR(`UserData.setLayoutPluginInstance(${datasetKey},${viewKey}).ERROR()`);
 		};
@@ -124,7 +124,7 @@ class UserData {
 				this._dataTmp.datasets[datasetKey] = {instance: null, views: {}, tabIndex: null};
 			};
 			if (!this._dataTmp.datasets[datasetKey].views[`ID${view.ID}`]) {
-				this._dataTmp.datasets[datasetKey].views[`ID${view.ID}`].instance = null;
+				this._dataTmp.datasets[datasetKey].views[`ID${view.ID}`] = {instance: null};
 			};
 			instance = this._dataTmp.datasets[datasetKey].views[`ID${view.ID}`].instance;
 		};
