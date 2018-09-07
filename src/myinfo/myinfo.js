@@ -104,16 +104,20 @@ class MyInfo {
 						var view = _this.userData.getView(datasetKey, viewKey);
 						viewKey = "ID"+view.ID;
 	
-						var tabIndex = _this.ui.addMenuAndWs(datasetKey, `${dataset.title}:${view.title}`);
-						_this.userData.setDatasetTabIndex(datasetKey, tabIndex);
-	
 						var lp_instance = _this.userData.getLayoutPluginInstance(datasetKey, viewKey);
 						if (!lp_instance) {
 							lp_instance = new (_this.settings.getLayoutPluginClass(view.layoutPluginKey))(datasetKey, viewKey, datasetInstance, view);
+							// ToDo: Az lp_instance-t innen át kell szervezni a ui alá.
 							_this.userData.setLayoutPluginInstance(datasetKey, viewKey, lp_instance);
 						};
-						lp_instance.constructLayout($(_this.mainDomID).width(),$(_this.mainDomID).height() - 100);
+
+						var tabIndex = _this.ui.addMenuAndWs(datasetKey, `${dataset.title}:${view.title}`, lp_instance);
+						_this.userData.setDatasetTabIndex(datasetKey, tabIndex);
 	
+						//lp_instance.constructLayout($(_this.mainDomID).width(),$(_this.mainDomID).height() - 100);
+						var heightOfOthers = $("#debug-area").outerHeight(true) + $("#menu-bar").outerHeight(true);
+						lp_instance.constructLayout($(window).width(), $(window).outerHeight(true) - heightOfOthers);
+						
 						// Időt kell hagyni az új tab megjelenésének (mert amíg nem jelent meg teljesen, addig a getBBox() fv nem működik.)
 						setTimeout(function(){ lp_instance.refreshLayout(); }, 1000);
 	
@@ -156,7 +160,8 @@ class MyInfo {
 	
 	test() {
 		log.DEBUG("test() START");
-		this.saveDataset("ID1");
+		//this.saveDataset("ID1");
+		var tmp = this.userData.getDatasetInstance("ID1").findOrphanNodeIDs();
 		log.DEBUG("test() END");
 	};
 };

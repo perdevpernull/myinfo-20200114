@@ -10,7 +10,7 @@ class Log {
 		this.lvl_INFO = {id: 2, text: "INFO", css: "color:green"};
 		this.lvl_DEBUG = {id: 3, text: "DEBUG", css: "color:black"};
 		
-		this.logLevel = this.DEBUG.id;
+		this.logLevel = this.lvl_DEBUG.id;
 	};
 
 	setLogLevel(level) {

@@ -41,7 +41,11 @@ class LP_Thebrain extends LayoutPlugin {
 		log.DEBUG(`LP_Thebrain.constructLayout(${width},${height})`);
 		var _this = this;
 		var str;
-
+		d3.select("body")
+			.on("keydown", function() {
+				_this._eventKeydown(_this);
+			})
+		;
 		// Inserting search bar
 			d3.select(`#ws-${this.datasetKey}`).append("div")
 				.attr("id", `lp_thebrain-${this.datasetKey}-${this.viewKey}`)
@@ -50,7 +54,7 @@ class LP_Thebrain extends LayoutPlugin {
 					.attr("id", `searchdiv-${this.datasetKey}-${this.viewKey}`)
 					.append("div")
 						.attr("id", `search-${this.datasetKey}-${this.viewKey}`)
-						.style("width", width+"px")
+						.style("width", "100%")
 			;
 
 			// Search bar Select2 init
@@ -136,7 +140,7 @@ class LP_Thebrain extends LayoutPlugin {
 
 
 		// ToDo: A NoteArea mező méretezését meg kell csinálni rendesen.
-		this._setZones(width, height - $(`#searchdiv-${this.datasetKey}-${this.viewKey}`).outerHeight(true) - 6 - 100); // 100 <- notearea
+		this._setZones(width - 30, height - $(`#searchdiv-${this.datasetKey}-${this.viewKey}`).outerHeight(true) - 6 - 107); // 100 <- notearea
 		
 		// Inserting drawingarea
 			d3.select(`#lp_thebrain-${this.datasetKey}-${this.viewKey}`).append("div")
@@ -195,10 +199,11 @@ class LP_Thebrain extends LayoutPlugin {
 		// Inserting notearea
 			d3.select(`#lp_thebrain-${this.datasetKey}-${this.viewKey}`).append("div")
 				.attr("id", `notearea-${this.datasetKey}-${this.viewKey}`)
-				.style("width", width)
+				//.style("width", width)
 				.style("height", 100)
 				.append("textarea")
-					.style("width", width+"px")
+					.attr("id", `note-${this.datasetKey}-${this.viewKey}`)
+					.style("width", "100%")
 					.style("height", "100px")
 			;
 	};
@@ -209,8 +214,21 @@ class LP_Thebrain extends LayoutPlugin {
 	};
 
 	resizeLayout(width, height) {
+		log.DEBUG(`LP_Thebrain.resizeLayout(${width},${height})`);
+		var datasetKeyAndViewKey = `${this.datasetKey}-${this.viewKey}`;
+		log.DEBUG(`LP_Thebrain.resizeLayout searchdiv(${$(`#searchdiv-${datasetKeyAndViewKey}`).outerHeight(true)})`);
+		// ToDo: Ez miért nem működik?
+		//var tmp2 = $(`notearea-${datasetKeyAndViewKey}`).outerHeight(true);
+		var tmp2 = 107;
 
-		log.DEBUG("LP_Thebrain.resizeLayout()");
+		log.DEBUG(`LP_Thebrain.resizeLayout notearea(${$(`notearea-${datasetKeyAndViewKey}`).outerHeight(true)})`);
+		d3.select(`#svg-${datasetKeyAndViewKey}`)
+			.style("width", width - 30)
+			//.style("height", height - $(`#searchdiv-${datasetKeyAndViewKey}`).outerHeight(true) - 6 - $(`notearea-${datasetKeyAndViewKey}`).outerHeight(true));
+			.style("height", height - $(`#searchdiv-${datasetKeyAndViewKey}`).outerHeight(true) - 6 - tmp2);
+
+		this._setZones($(`#svg-${datasetKeyAndViewKey}`).width(),$(`#svg-${datasetKeyAndViewKey}`).height());
+		this._drawVisibles(this._view.viewData.selectedNodeID);
 	};
 
 	refreshLayout() {
@@ -660,6 +678,10 @@ class LP_Thebrain extends LayoutPlugin {
 				log.DEBUG(`eventClickNode(${d})`);
 				_this._drawVisibles(d);
 			})
+			.on("dblclick", function(d) {
+				log.DEBUG(`eventDblclickNode(${d})`);
+				$(`#search-${_this.datasetKey}-${_this.viewKey}`).select2("open");
+			})
 		;
 			var tmpRect = selection.append("rect");
 			var tmpText = selection.append("text")
@@ -809,6 +831,11 @@ class LP_Thebrain extends LayoutPlugin {
 		};
 		this._tmp.historyIDs.unshift(nodeID);
 
+		// Filter out the deleted items
+		this._tmp.historyIDs = this._tmp.historyIDs.filter( function(element) {
+			return (!_this._datasetInstance.isDeleted(element));
+		});
+
 		var remainingWidth = this._w;
 		var padding = 30;
 		var terminate = false;
@@ -892,6 +919,66 @@ class LP_Thebrain extends LayoutPlugin {
 
 	_eventKeydown(_this) {
 		log.DEBUG(`d3.event.key(${d3.event.key})`);
+		switch (d3.event.key) {
+			case "ArrowRight":
+				if (d3.event.ctrlKey) {
+					//
+				} else {
+					var nodeID = _this._view.viewData.selectedNodeID;
+					if (_this._tmp.visibles.siblingIDs.length > 0) {
+						var nextNodeID = _this._tmp.visibles.siblingIDs.find( function(element) {
+							return element > nodeID;
+						});
+						if (nextNodeID) {
+							_this._drawVisibles(nextNodeID);
+						} else {
+							_this._drawVisibles(_this._tmp.visibles.siblingIDs[0]);
+						};
+					};
+				};
+				break;
+			case "ArrowDown":
+				if (d3.event.ctrlKey) {
+					_this.addChild(_this._view.viewData.selectedNodeID);
+				} else {
+					if (_this._tmp.visibles.childIDs.length > 0) {
+						_this._drawVisibles(_this._tmp.visibles.childIDs[0]);
+					}
+				};
+				break;
+			case "ArrowUp":
+				if (d3.event.ctrlKey) {
+					_this.addParent(_this._view.viewData.selectedNodeID);
+				} else {
+					if (_this._tmp.visibles.parentIDs.length > 0) {
+						_this._drawVisibles(_this._tmp.visibles.parentIDs[0]);
+					}
+				};
+				break;
+			case "ArrowLeft":
+				if (d3.event.ctrlKey) {
+					_this.addFriend(_this._view.viewData.selectedNodeID);
+				} else {
+					var nodeID = _this._view.viewData.selectedNodeID;
+					if (_this._tmp.visibles.friendIDs.length > 0) {
+						var nextNodeID = _this._tmp.visibles.friendIDs.find( function(element) {
+							return element > nodeID;
+						});
+						if (nextNodeID) {
+							_this._drawVisibles(nextNodeID);
+						} else {
+							_this._drawVisibles(_this._tmp.visibles.friendIDs[0]);
+						};
+					};
+				};
+				break;
+			case "Delete":
+				var nodeID = _this._view.viewData.selectedNodeID;
+				_this.deleteNode(nodeID);
+				break;
+			default:
+				log.DEBUG(d3.event.key);
+		};
 	};
 
 	_eventMouseenterNode(nodeID, node) {
@@ -1095,6 +1182,75 @@ class LP_Thebrain extends LayoutPlugin {
 			};
 		} else {
 			this._tmp.viewMode = "normal";
+		};
+	};
+
+	addChild(nodeID) {
+		if (!nodeID) {
+			nodeID = this._view.viewData.selectedNodeID;
+		};
+		this._tmp.viewMode = "insert";
+		this._tmp.newNode.sourceNodeID = nodeID;
+		this._tmp.newNode.sourceClass = "node";
+		this._tmp.newNode.targetNodeID = -1;
+		this._tmp.newNode.targetClass = null;
+		this._tmp.newNode.linkType = "child";
+		$(`#search-${this.datasetKey}-${this.viewKey}`).select2("open");
+	};
+
+	addParent(nodeID) {
+		if (nodeID === null) {
+			nodeID = this._view.viewData.selectedNodeID;
+		};
+		this._tmp.viewMode = "insert";
+		this._tmp.newNode.sourceNodeID = nodeID;
+		this._tmp.newNode.sourceClass = "node";
+		this._tmp.newNode.targetNodeID = -1;
+		this._tmp.newNode.targetClass = null;
+		this._tmp.newNode.linkType = "parent";
+		$(`#search-${this.datasetKey}-${this.viewKey}`).select2("open");
+	};
+
+	addFriend(nodeID) {
+		if (nodeID === null) {
+			nodeID = this._view.viewData.selectedNodeID;
+		};
+		this._tmp.viewMode = "insert";
+		this._tmp.newNode.sourceNodeID = nodeID;
+		this._tmp.newNode.sourceClass = "node";
+		this._tmp.newNode.targetNodeID = -1;
+		this._tmp.newNode.targetClass = null;
+		this._tmp.newNode.linkType = "friend";
+		$(`#search-${this.datasetKey}-${this.viewKey}`).select2("open");
+	};
+
+	deleteNode(nodeID) {
+		if (nodeID === null) {
+			nodeID = this._view.viewData.selectedNodeID;
+		};
+		var newSelectedID = null;
+		var datasetInstance = this._datasetInstance;
+		var otherRoodNodeID = Object.keys(datasetInstance._data.rootNodes).filter(function(element) {
+			return datasetInstance._data.rootNodes[element] != nodeID;
+		});
+
+		if (this._tmp.visibles.parentIDs.length > 0) {
+			newSelectedID = this._tmp.visibles.parentIDs[0];
+		} else if (this._tmp.visibles.childIDs.length > 0) {
+			newSelectedID = this._tmp.visibles.childIDs[0];
+		} else if (this._tmp.visibles.friendIDs.length > 0) {
+			newSelectedID = this._tmp.visibles.friendIDs[0];
+		} else if (otherRoodNodeID.length > 0) {
+			newSelectedID = datasetInstance._data.rootNodes[otherRoodNodeID[0]];
+		} else {
+			var orphanNodeIDs = datasetInstance.findOrphanNodeIDs();
+			if (orphanNodeIDs.length > 0) {
+				newSelectedID = orphanNodeIDs[0];
+			}
+		};
+		if (newSelectedID !== null) {
+			datasetInstance.deleteNode(nodeID);
+			this._drawVisibles(newSelectedID);
 		};
 	};
 };

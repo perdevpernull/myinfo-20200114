@@ -87,7 +87,8 @@ class Dataset {
 
 	findOrphanNodeIDs() {
 		var possibleOrphanNodes = {};
-		var orphanNodeIDs = {};
+		var orphanNodeKeys = {};
+		var orphanNodeIDs = [];
 		var ID;
 		var childLinkIDs;
 		var childLinks;
@@ -125,7 +126,7 @@ class Dataset {
 		keys = Object.keys(possibleOrphanNodes);
 		while (keys.length > 0) {
 			ID = possibleOrphanNodes[keys[0]].ID;
-			orphanNodeIDs[`ID${ID}`] = ID;
+			orphanNodeKeys[`ID${ID}`] = ID;
 
 			rootOrHasParentNodes = [];
 			for (var i in possibleOrphanNodes[keys[0]].childLinkIDs) {
@@ -146,6 +147,9 @@ class Dataset {
 			keys = Object.keys(possibleOrphanNodes);
 		};
 
+		for (key in orphanNodeKeys) {
+			orphanNodeIDs.push(this._data.nodes[key].ID);
+		}
 		return orphanNodeIDs;
 	}
 

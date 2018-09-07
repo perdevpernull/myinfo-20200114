@@ -203,7 +203,7 @@ class UI {
 
 		this.home = new UIHome("#ws-home");
 
-		// ToDo: ezt itt kupucolni.
+		// ToDo: Átnézendő.
 		$("#ws-home-tab").on("show.bs.pill", function (e) {
 			log.INFO("Helló-belló!");
 			myinfo.refreshHome();
@@ -212,13 +212,31 @@ class UI {
 			log.INFO("Helló-belló2!");
 			myinfo.refreshHome();
 		});
+
+		$(window).resize( function() {
+			myinfo.ui.resize( $(window).width(), $(window).outerHeight(true));
+		});
+
+		this.mainDomID = domID;
+		this.tabs = {};
+	};
+
+	resize(newWidth, newHeight) {
+		log.INFO(`Resize (${newWidth},${newHeight})`);
+		var heightOfOthers = $("#debug-area").outerHeight(true) + $("#menu-bar").outerHeight(true);
+		log.INFO(`Resize heightOfOthers(${heightOfOthers})`);
+		for (var datasetKey in this.tabs) {
+			this.tabs[datasetKey].layoutPluginInstance.resizeLayout(newWidth, newHeight - heightOfOthers);
+		};
 	};
 
 	refreshHome(datasets) {
 		this.home.refresh(datasets);
 	};
 
-	addMenuAndWs(datasetKey, menuTitle) {
+	addMenuAndWs(datasetKey, menuTitle, lp_instance) {
+		this.tabs[datasetKey] = {layoutPluginInstance: lp_instance};
+
 		var str = `
 			<li id="menu-${datasetKey}" class="nav-item">
 				<a id="ws-${datasetKey}-tab" class="nav-link" data-toggle="pill" href="#ws-${datasetKey}" role="tab">${menuTitle}</a>
