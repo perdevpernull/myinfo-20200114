@@ -249,7 +249,7 @@ class LP_Thebrain extends LayoutPlugin {
 		this._friendzone = {x: this._x, y: this._y, w: this._w/3, h: 2*this._h/3};
 		this._siblingzone = {x: this._x+2*this._w/3, y: this._y, w: this._w/3, h: 2*this._h/3};
 
-		this._placeholder = {x: this._actualzone.x + this._actualzone.w/2, y: this._actualzone.y + this._actualzone.h/2}
+		this._placeholder = {x: this._actualzone.x + this._actualzone.w/2, y: this._actualzone.y + this._actualzone.h/2};
 
 		this._actualEntrypoint = {x: this._placeholder.x, y: this._placeholder.y};
 		this._childEntrypoint = {x: this._x + this._w/2, y: this._y + this._h};
@@ -543,7 +543,7 @@ class LP_Thebrain extends LayoutPlugin {
 						};
 						// ToDo: Megvizsgálandó, h szükség van e erre az ellenőrzésre.
 						if (this._tmp.visibles.links.findIndex( function(element) {
-								return ((element.key === linkKey) && (element.type === linkType))
+								return ((element.key === linkKey) && (element.type === linkType));
 							}) === -1)
 						{
 							this._tmp.visibles.links.push(link);
@@ -982,7 +982,7 @@ class LP_Thebrain extends LayoutPlugin {
 	};
 
 	_eventMouseenterNode(nodeID, node) {
-		var nodes = this.svgBase.selectAll(`#node_${nodeID}`)
+		var nodes = this.svgBase.selectAll(`#node_${nodeID}`);
 		nodes.select(".rectangle")
 			.style("stroke-width", 3)
 		;
