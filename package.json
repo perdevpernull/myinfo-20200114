@@ -33,8 +33,7 @@
     "dot": "^1.1.2",
     "express": "^4.16.3",
     "express-session": "^1.15.6",
-    "memorystore": "^1.6.0",
-    "select2": "^4.0.6-rc.1"
+    "memorystore": "^1.6.0"
   },
   "devDependencies": {
     "clean-webpack-plugin": "^0.1.19",

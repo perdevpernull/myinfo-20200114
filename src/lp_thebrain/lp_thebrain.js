@@ -1099,7 +1099,7 @@ class LP_Thebrain extends LayoutPlugin {
 					var nodeID = this._view.viewData.selectedNodeID;
 					this.deleteNode(nodeID);
 					break;
-				case "s":
+				case "f":
 					if (e.ctrlKey) {
 						// To disable browser page save.
 						e.preventDefault();
