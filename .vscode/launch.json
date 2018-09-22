@@ -16,6 +16,12 @@
             "name": "Launch Chrome against localhost",
             "url": "http://localhost:8080",
             "webRoot": "${workspaceFolder}"
-        }
+		},
+		{
+            "type": "node",
+            "request": "launch",
+            "name": "GenerateTestTemplate.js",
+            "program": "${workspaceFolder}/src/myinfo/view/generateTestTemplate.js"
+		}
     ]
 }

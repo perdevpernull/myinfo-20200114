@@ -16,9 +16,10 @@ module.exports = {
     plugins: [
         new CleanWebpackPlugin(['dist']),
         new HtmlWebpackPlugin({
-            template: './src/template.myinfo.html',
+            template: './src/myinfo/view/template.myinfo.html',
             title: 'myInfo PROD PAGE - mindmap, thebrain',
-            filename: 'index.html',
+			filename: 'index.html',
+			inject: true,
             excludeChunks: [ 'dp_note', 'lp_thebrain' ]
         })
     ],
@@ -26,17 +27,13 @@ module.exports = {
         filename: '[name].js',
         path: path.resolve(__dirname, 'dist'),
         publicPath: '/'
-    }/*,
+	},
     module: {
         rules: [
             {
-                type: 'javascript/auto',
-                test: /\.(json)$/,
-                use: [
-                    'file-loader?name=[name].[ext]'
-                ]
+                test: /\.(def)$/,
+                use: 'raw-loader'
             }
         ]
     }
-*/
 };

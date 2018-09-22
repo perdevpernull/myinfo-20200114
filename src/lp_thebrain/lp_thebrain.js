@@ -1,6 +1,7 @@
 import {log} from "../common/util/log";
 import {LayoutPlugin} from "../common/layoutplugin";
 import {calcPathWithDirs} from "./util/calcpathwithdirs";
+import {uiLp_thebrainHtml} from "./uiLp_thebrainTemplating";
 
 var nodeHeight = 42;
 var margo = 5;
@@ -23,6 +24,7 @@ class LP_Thebrain extends LayoutPlugin {
 			nodes: {},
 			historyIDs: [],
 			viewMode: "normal",
+			focus: "svg",
 			newNode: {linkType: "", sourceClass: null, sourceNodeID: null, targetClass: null, targetNodeID: null},
 		};
 		log.loginc();
@@ -31,7 +33,7 @@ class LP_Thebrain extends LayoutPlugin {
 			log.DEBUG(`dp_note(${this._datasetInstance.dp_note()})`);
 		} else {
 			// ToDo: Itt majd kell egy exception, h nem futhatunk tovább!
-			log.DEBUG(`dp_note() not installed`);
+			log.ERROR(`dp_note() not installed`);
 		};
 		log.logdec();
 		log.DEBUG("LP_Thebrain.constructor()");
@@ -41,171 +43,187 @@ class LP_Thebrain extends LayoutPlugin {
 		log.DEBUG(`LP_Thebrain.constructLayout(${width},${height})`);
 		var _this = this;
 		var str;
-		d3.select("body")
-			.on("keydown", function() {
-				_this._eventKeydown(_this);
-			})
-		;
-		// Inserting search bar
-			d3.select(`#ws-${this.datasetKey}`).append("div")
-				.attr("id", `lp_thebrain-${this.datasetKey}-${this.viewKey}`)
-			// Insert Select2 search field
-				.append("div")
-					.attr("id", `searchdiv-${this.datasetKey}-${this.viewKey}`)
-					.append("div")
-						.attr("id", `search-${this.datasetKey}-${this.viewKey}`)
-						.style("width", "100%")
-			;
 
-			// Search bar Select2 init
-				$(`#search-${this.datasetKey}-${this.viewKey}`).select2(
-					{
-						query: function(options) {
-							//alert("query: "+JSON.stringify(options));
-							var pageSize = 10;
-							var startIndex = (options.page - 1) * pageSize;
-							var filteredData = [];
+		this._setZones(width - 30, height - 6 - 107);
 
-							if (options.term && options.term.length > 0) {
-								if (!options.context) {
-									var term = options.term.toLowerCase();
+		var placeholderZoomPercent = 33/100;
+		str = uiLp_thebrainHtml({
+			datasetKey: this.datasetKey,
+			viewKey: this.viewKey,
+			width: this._w,
+			height: this._h,
+			placeholder_x: this._placeholder.x,
+			placeholder_y: this._placeholder.y,
+			placeholderZoomPercent: placeholderZoomPercent
+		});
+		$(`#ws-${this.datasetKey}`).append(str);
 
-									options.context = _this._datasetInstance.searchNodesByText(term);
-								}
-								filteredData = options.context;
-							}
+		this.svg = d3.select(`#svg-${this.datasetKey}-${this.viewKey}`);	
+		this.svgBase = d3.select(`#svgBase-${this.datasetKey}-${this.viewKey}`);
+		this.svgPlaceholder = d3.select(`#svgPlaceholder-${this.datasetKey}-${this.viewKey}`);
 
-							options.callback({
-								context: filteredData,
-								results: filteredData.slice(startIndex, startIndex + pageSize),
-								more: (startIndex + pageSize) < filteredData.length
-							});
-						},
-						placeholder: "Search ...",
-						allowClear: true,
-						openOnEnter: false,
-						formatNoMatches: function(term) {return "No results ...";},
-						containerCssClass : "show-hide",
-						createSearchChoice : function(term, data) {
-							if (_this._tmp.viewMode === "insert") {
-								if ((data.length !== 1) || (term !== data[0].text)) {
-									return { id: -1, text: term };
-								};
-							};
-						}
-					}
-				);
+		this.svgLinks = d3.select(`#svgLinks-${this.datasetKey}-${this.viewKey}`);
+		this.svgNodes = d3.select(`#svgNodes-${this.datasetKey}-${this.viewKey}`);
+		this.svgPins = d3.select(`#svgPins-${this.datasetKey}-${this.viewKey}`);
+		this.svgHistory = d3.select(`#svgHistory-${this.datasetKey}-${this.viewKey}`);
 
-				// Select2 search box listeners
-					$(`#search-${this.datasetKey}-${this.viewKey}`).on("select2-selecting", function(e) {
-						if (_this._tmp.viewMode === "insert") {
-							//alert(`val=(${e.val})`);
-							//alert(`object=(${JSON.stringify(e.object)})`);
-							_this.svgBase.select("#dragcircle").remove();
-							_this.svgBase.select("#dragpath").remove();
-							_this._tmp.viewMode = "normal";
-							if (e.val > -1) {
-								if (_this._tmp.newNode.linkType === "friend") {
-									_this._datasetInstance.addFriendLink(_this._tmp.newNode.sourceNodeID, e.val);
-								} else if (_this._tmp.newNode.linkType === "parent") {
-									_this._datasetInstance.addParentLink(_this._tmp.newNode.sourceNodeID, e.val);
-								} else if (_this._tmp.newNode.linkType === "child") {
-									_this._datasetInstance.addChildLink(_this._tmp.newNode.sourceNodeID, e.val);
-								};
-								_this._drawVisibles(_this._tmp.newNode.sourceNodeID);
-							} else {
-								var newNodeID;
-								if (_this._tmp.newNode.linkType === "friend") {
-									newNodeID = _this._datasetInstance.addFriendNode( _this._tmp.newNode.sourceNodeID, e.object.text);
-								} else if (_this._tmp.newNode.linkType === "parent") {
-									newNodeID = _this._datasetInstance.addParentNode( _this._tmp.newNode.sourceNodeID, e.object.text);
-								} else if (_this._tmp.newNode.linkType === "child") {
-									newNodeID = _this._datasetInstance.addChildNode( _this._tmp.newNode.sourceNodeID, e.object.text);
-								};
-								_this._drawVisibles(_this._tmp.newNode.sourceNodeID);
-							};
-						} else {
-							_this._drawVisibles(e.object.id);
-						};
-					});
-					$(`#search-${this.datasetKey}-${this.viewKey}`).on("select2-close", function(e) {
-						console.log("select2-close: "+_this._tmp.newNode.sourceNodeID);
-						_this.svgBase.select("#dragcircle").remove();
-						_this.svgBase.select("#dragpath").remove();
-						_this._tmp.viewMode = "normal";
-						if (_this._tmp.newNode.sourceNodeID !== null) {
-							_this._setCirclesDisplay(_this._tmp.newNode.sourceNodeID, "showHasLinks");
-						};
-					});
+		// Node-editor section
+		$(`#node-editor-${this.datasetKey}-${this.viewKey}`).on("show.bs.modal", function () {
+			_this._tmp.focus = "editor";
+			var nodeID = _this._view.viewData.selectedNodeID;
+			$(`#node-editor-${_this.datasetKey}-${_this.viewKey}-title`).text(`Edit node's text (ID${nodeID})`);
+			$(`#node-editor-${_this.datasetKey}-${_this.viewKey}-nodeID`).val(nodeID);
+			$(`#node-editor-${_this.datasetKey}-${_this.viewKey}-nodeText`).val(_this._datasetInstance.getNode(nodeID).text);
+		});
 
+		$(`#node-editor-${this.datasetKey}-${this.viewKey}`).on("shown.bs.modal", function () {
+			$(`#node-editor-${_this.datasetKey}-${_this.viewKey}-nodeText`).trigger('focus');
+		});
 
-		// ToDo: A NoteArea mező méretezését meg kell csinálni rendesen.
-		this._setZones(width - 30, height - $(`#searchdiv-${this.datasetKey}-${this.viewKey}`).outerHeight(true) - 6 - 107); // 100 <- notearea
+		$(`#node-editor-${this.datasetKey}-${this.viewKey}-save`).click( function () {
+			var nodeID = Number($(`#node-editor-${_this.datasetKey}-${_this.viewKey}-nodeID`).val());
+			var text = $(`#node-editor-${_this.datasetKey}-${_this.viewKey}-nodeText`).val();
+			_this._datasetInstance._data.nodes[`ID${nodeID}`].text = text;
+
+			_this._modifyNode(d3.select(`#node_${nodeID}`), _this);
+			_this._drawVisibles(nodeID);
+			log.DEBUG(`ID${nodeID}.text="${text}"`);
+		});
+
+		$(`#node-editor-${this.datasetKey}-${this.viewKey}`).on("hidden.bs.modal", function () {
+			_this._tmp.focus = "svg";
+		});
+
+		// Node-search section
+		$.fn.select2.amd.require([
+			'select2/data/array',
+			'select2/utils'
+		], function (ArrayData, Utils) {
+			function CustomData ($element, options) {
+				CustomData.__super__.constructor.call(this, $element, options);
+			}
 		
-		// Inserting drawingarea
-			d3.select(`#lp_thebrain-${this.datasetKey}-${this.viewKey}`).append("div")
-				.attr("id", `drawingarea-${this.datasetKey}-${this.viewKey}`)
-			;
-			// Inserting svg
-				this.svg = d3.select(`#drawingarea-${this.datasetKey}-${this.viewKey}`).append("svg")
-					.attr("id", `svg-${this.datasetKey}-${this.viewKey}`)
-					.style("width", this._w)
-					.style("height", this._h)
-					.style("stroke", "black")
-					.style("stroke-width", 1)
-					.style("border", "1px solid black")
-					.on("selectstart", function() {d3.event.preventDefault();}) // To prevent text selection in the svg object.
-				;
+			Utils.Extend(CustomData, ArrayData);
+		
+			CustomData.prototype.query = function (params, callback) {
+				var pageSize = 6;
+				var data = {results: [], all: []};
+				if (!("page" in params)) {
+					params.page = 1;
 
-					this.svgBase = this.svg.append("g")
-						.attr("id", `svgBase-${this.datasetKey}-${this.viewKey}`)
-					;
-						this.svgPlaceholder = this.svgBase.append("g")
-							.attr("id", `svgPlaceholder-${this.datasetKey}-${this.viewKey}`)
-							.attr("transform", `translate(${this._placeholder.x},${this._placeholder.y})`)
-						;
-							var zoomPercent = 33/100;
-							this.svgPlaceholder.append("polygon")
-								.attr("id", `placeholder-${this.datasetKey}-${this.viewKey}`)
-								.attr("points", `${0*zoomPercent},${-100*zoomPercent} ${-97*zoomPercent},${22*zoomPercent} ${43*zoomPercent},${90*zoomPercent} ${78*zoomPercent},${-62*zoomPercent} ${-78*zoomPercent},${-62*zoomPercent} ${-43*zoomPercent},${90*zoomPercent} ${97*zoomPercent},${22*zoomPercent}`)
-								.style("fill", "lime")
-								.style("fill-rule", "evenodd")
-								.style("stroke", "purple")
-								.style("stroke-width", 3)
-								.style("opacity", 0.3)
-								.append("animateTransform")
-									.attr("attributeName", "transform")
-									.attr("attributeType", "XML")
-									.attr("type", "rotate")
-									.attr("from", "0 0 0")
-									.attr("to", "360 0 0")
-									.attr("dur", "7s")
-									.attr("repeatCount","indefinite")
-									//.attr("repeatCount","1")
-							;
-						this.svgLinks = this.svgBase.append("g")
-							.attr("id", `svgLinks-${this.datasetKey}-${this.viewKey}`)
-						;
-						this.svgNodes = this.svgBase.append("g")
-							.attr("id", `svgNodes-${this.datasetKey}-${this.viewKey}`)
-						;
-						this.svgPins = this.svgBase.append("g")
-							.attr("id", `svgPins-${this.datasetKey}-${this.viewKey}`)
-						;
-						this.svgHistory = this.svgBase.append("g")
-							.attr("id", `svgHistory-${this.datasetKey}-${this.viewKey}`)
-						;
+					if (params.term && params.term.length > 0) {
+						params.all = _this._datasetInstance.searchNodesByText(params.term);
 
-		// Inserting notearea
-			d3.select(`#lp_thebrain-${this.datasetKey}-${this.viewKey}`).append("div")
-				.attr("id", `notearea-${this.datasetKey}-${this.viewKey}`)
-				//.style("width", width)
-				.style("height", 100)
-				.append("textarea")
-					.attr("id", `note-${this.datasetKey}-${this.viewKey}`)
-					.style("width", "100%")
-					.style("height", "100px")
-			;
+						if (params.all.length > params.page * pageSize) {
+							data.results = params.all.slice((params.page - 1) * pageSize, params.page * pageSize);
+							data["pagination"] = {more: true};
+						} else {
+							data.results = params.all;
+							data["pagination"] = {more: false};
+						}
+
+						if (_this._tmp.viewMode === "insert") {
+							if ((data.results.length !== 1) || (params.term !== data.results[0].text)) {
+								data.results.unshift({
+									id: -1,
+									text: params.term
+								});
+							};
+						};
+					};
+				} else if (params.page > 1) {
+					if (params.all.length > params.page * pageSize) {
+						data.results = params.all.slice((params.page - 1) * pageSize, params.page * pageSize);
+						data["pagination"] = {more: true};
+					} else {
+						data.results = params.all.slice((params.page - 1) * pageSize, params.page * pageSize);
+						data["pagination"] = {more: false};
+					}
+				};
+
+				callback(data);
+			};
+			
+			CustomData.prototype.current = function (callback) {
+				var data = [];
+				var nodeID = _this._view.viewData.selectedNodeID;
+
+				data.push({
+					id: `${nodeID}`,
+					text: _this._datasetInstance.getNode(nodeID).text,
+					selected: true
+				});
+
+				callback(data);
+			};
+		
+			$(`#node-search-${_this.datasetKey}-${_this.viewKey}-nodeText`).select2({
+				dropdownParent: $(`#node-search-${_this.datasetKey}-${_this.viewKey}`),
+				placeholder: "Search ...",
+				dataAdapter: CustomData,
+				ajax: {}
+			});
+		});
+
+		$(`#node-search-${this.datasetKey}-${this.viewKey}`).on("show.bs.modal", function () {
+			_this._tmp.focus = "search";
+			if (_this._tmp.viewMode === "insert") {
+				$(`#node-search-${_this.datasetKey}-${_this.viewKey}-title`).text(`Search or Insert`);
+			} else {
+				$(`#node-search-${_this.datasetKey}-${_this.viewKey}-title`).text(`Search`);
+			};
+		});
+
+		$(`#node-search-${this.datasetKey}-${this.viewKey}`).on("shown.bs.modal", function () {
+			setTimeout(function(){ $(`#node-search-${_this.datasetKey}-${_this.viewKey}-nodeText`).select2('open'); }, 250);
+		});
+
+		$(`#node-search-${this.datasetKey}-${this.viewKey}-nodeText`).on('select2:selecting', function (e) {
+			if (_this._tmp.viewMode === "insert") {
+				_this.svgBase.select("#dragcircle").remove();
+				_this.svgBase.select("#dragpath").remove();
+				_this._tmp.viewMode = "normal";
+				if (e.params.args.data.id > -1) {
+					if (_this._tmp.newNode.linkType === "friend") {
+						_this._datasetInstance.addFriendLink(_this._tmp.newNode.sourceNodeID, e.params.args.data.id);
+					} else if (_this._tmp.newNode.linkType === "parent") {
+						_this._datasetInstance.addParentLink(_this._tmp.newNode.sourceNodeID, e.params.args.data.id);
+					} else if (_this._tmp.newNode.linkType === "child") {
+						_this._datasetInstance.addChildLink(_this._tmp.newNode.sourceNodeID, e.params.args.data.id);
+					};
+					_this._drawVisibles(_this._tmp.newNode.sourceNodeID);
+				} else {
+					var newNodeID;
+					if (_this._tmp.newNode.linkType === "friend") {
+						newNodeID = _this._datasetInstance.addFriendNode( _this._tmp.newNode.sourceNodeID, e.params.args.data.text);
+					} else if (_this._tmp.newNode.linkType === "parent") {
+						newNodeID = _this._datasetInstance.addParentNode( _this._tmp.newNode.sourceNodeID, e.params.args.data.text);
+					} else if (_this._tmp.newNode.linkType === "child") {
+						newNodeID = _this._datasetInstance.addChildNode( _this._tmp.newNode.sourceNodeID, e.params.args.data.text);
+					};
+					_this._drawVisibles(_this._tmp.newNode.sourceNodeID);
+				};
+			} else {
+				var nodeID = e.params.args.data.id;
+				_this._drawVisibles(nodeID);
+			}
+			$(`#node-search-${_this.datasetKey}-${_this.viewKey}`).modal("hide");
+		});
+
+		$(`#node-search-${this.datasetKey}-${this.viewKey}-nodeText`).on('select2:close', function (e) {
+			_this.svgBase.select("#dragcircle").remove();
+			_this.svgBase.select("#dragpath").remove();
+			_this._tmp.viewMode = "normal";
+			if (_this._tmp.newNode.sourceNodeID !== null) {
+				_this._setCirclesDisplay(_this._tmp.newNode.sourceNodeID, "showHasLinks");
+			};
+		});
+
+		$(`#node-search-${this.datasetKey}-${this.viewKey}`).on("hidden.bs.modal", function () {
+			_this._tmp.focus = "svg";
+		});
+
+
 	};
 
 	destructLayout() {
@@ -267,6 +285,9 @@ class LP_Thebrain extends LayoutPlugin {
 		var _this = this;
 
 		this._view.viewData.selectedNodeID = nodeID;
+
+		// Ez vmiért kell, h a select2 frissüljön. Önmagában a .current metódusa nem elég.
+		$(`#node-search-${_this.datasetKey}-${_this.viewKey}-nodeText`).val(null).trigger("change");
 
 		// A korábbi látható elmek pozícióinak elmentése
 			for (var i in this._tmp.visibles.nodeIDs) {
@@ -636,7 +657,6 @@ class LP_Thebrain extends LayoutPlugin {
 
 	_appendNode(selection, _this) {
 		//log.ERROR("_appendNode" + JSON.stringify(selection));
-
 		selection
 			.attr("class", "node")
 			.attr("id", function(d) { return "node_"+d; })
@@ -680,7 +700,7 @@ class LP_Thebrain extends LayoutPlugin {
 			})
 			.on("dblclick", function(d) {
 				log.DEBUG(`eventDblclickNode(${d})`);
-				$(`#search-${_this.datasetKey}-${_this.viewKey}`).select2("open");
+				$(`#node-editor-${_this.datasetKey}-${_this.viewKey}`).modal('show');
 			})
 		;
 			var tmpRect = selection.append("rect");
@@ -695,6 +715,7 @@ class LP_Thebrain extends LayoutPlugin {
 
 			tmpRect
 				.attr("class", "rectangle")
+				.attr("id", function(d) { return "rect_"+d; })
 				.attr("x", function(d) {
 					return this.parentNode.getBBox().x - margo;
 				})
@@ -784,6 +805,102 @@ class LP_Thebrain extends LayoutPlugin {
 					})
 				)
 			;
+	};
+
+	_modifyNode(selection, _this) {
+		var nodeID = selection.datum();
+		var t = selection.selectAll("circle");
+		selection.selectAll("circle").remove();
+		var tmpRect = selection.select(`#rect_${nodeID}`)
+			.attr("x", 0)
+			.attr("y", 0)
+			.attr("width", 0)
+			.attr("height", 0)
+		;
+		var tmpText = selection.select(`#text_${nodeID}`)
+			.text(function(d) { return _this._datasetInstance.getNode(d).text; })
+		;
+
+		tmpRect
+			.attr("x", function(d) {
+				return this.parentNode.getBBox().x - margo;
+			})
+			.attr("y", function(d) {
+				return this.parentNode.getBBox().y - margo;
+			})
+			.attr("width", function(d) {
+				return _this._tmp.nodes[`ID${d}`].width = margo + this.parentNode.getBBox().width + margo;
+			})
+			.attr("height", function(d) {
+				return _this._tmp.nodes[`ID${d}`].height = margo + this.parentNode.getBBox().height + margo;
+			})
+		;
+		selection.append("circle")
+			.attr("class", "child")
+			.attr("r", margo)
+			.attr("cx", 2*margo)
+			.attr("cy", function(d) {return _this._tmp.nodes[`ID${d}`].height/2;})
+			.style("fill", "#f00")
+			.style("stroke-width", 2)
+			.style("display", function(d) {
+				return _this._datasetInstance.hasChildLinks(d) ? "inline" : "none";
+			})
+			.call(d3.drag()
+				.on("start", function(d) {
+					_this._eventDragStartCircle(d, this);
+				})
+				.on("drag", function(d) {
+					_this._eventDragDragCircle(d, this);
+				})
+				.on("end", function(d) {
+					_this._eventDragEndCircle(d, this);
+				})
+			)
+		;
+		selection.append("circle")
+			.attr("class", "parent")
+			.attr("r", margo)
+			.attr("cx", -2*margo)
+			.attr("cy", function(d) {return -_this._tmp.nodes[`ID${d}`].height/2;})
+			.style("fill", "#0f0")
+			.style("stroke-width", 2)
+			.style("display", function(d) {
+				return _this._datasetInstance.hasParentLinks(d) ? "inline" : "none";
+			})
+			.call(d3.drag()
+				.on("start", function(d) {
+					_this._eventDragStartCircle(d, this);
+				})
+				.on("drag", function(d) {
+					_this._eventDragDragCircle(d, this);
+				})
+				.on("end", function(d) {
+					_this._eventDragEndCircle(d, this);
+				})
+			)
+		;
+		selection.append("circle")
+			.attr("class", "friend")
+			.attr("r", margo)
+			.attr("cx", function(d) {return -_this._tmp.nodes[`ID${d}`].width/2;})
+			.attr("cy", 0)
+			.style("fill", "#00f")
+			.style("stroke-width", 2)
+			.style("display", function(d) {
+				return _this._datasetInstance.hasFriendLinks(d) ? "inline" : "none";
+			})
+			.call(d3.drag()
+				.on("start", function(d) {
+					_this._eventDragStartCircle(d, this);
+				})
+				.on("drag", function(d) {
+					_this._eventDragDragCircle(d, this);
+				})
+				.on("end", function(d) {
+					_this._eventDragEndCircle(d, this);
+				})
+			)
+		;
 	};
 
 	_appendLink(selection, _this) {
@@ -917,67 +1034,87 @@ class LP_Thebrain extends LayoutPlugin {
 		;
 	};
 
-	_eventKeydown(_this) {
-		log.DEBUG(`d3.event.key(${d3.event.key})`);
-		switch (d3.event.key) {
-			case "ArrowRight":
-				if (d3.event.ctrlKey) {
-					//
-				} else {
-					var nodeID = _this._view.viewData.selectedNodeID;
-					if (_this._tmp.visibles.siblingIDs.length > 0) {
-						var nextNodeID = _this._tmp.visibles.siblingIDs.find( function(element) {
-							return element > nodeID;
-						});
-						if (nextNodeID) {
-							_this._drawVisibles(nextNodeID);
-						} else {
-							_this._drawVisibles(_this._tmp.visibles.siblingIDs[0]);
+	eventListenerKeydown(e) {
+		//$(`#node-editor-${this.datasetKey}-${this.viewKey}`).modal('show');
+		log.DEBUG(`e.key(${e.key})`);
+		if (this._tmp.focus === "search") {
+			// Events for modal #node-search-
+		} else if (this._tmp.focus === "editor") {
+			// Events for modal #node-editor-
+		} else if (this._tmp.focus === "svg") {
+			switch (e.key) {
+				case "ArrowRight":
+					if (e.ctrlKey) {
+						//
+					} else {
+						var nodeID = this._view.viewData.selectedNodeID;
+						if (this._tmp.visibles.siblingIDs.length > 0) {
+							var nextNodeID = this._tmp.visibles.siblingIDs.find( function(element) {
+								return element > nodeID;
+							});
+							if (nextNodeID) {
+								this._drawVisibles(nextNodeID);
+							} else {
+								this._drawVisibles(this._tmp.visibles.siblingIDs[0]);
+							};
 						};
 					};
-				};
-				break;
-			case "ArrowDown":
-				if (d3.event.ctrlKey) {
-					_this.addChild(_this._view.viewData.selectedNodeID);
-				} else {
-					if (_this._tmp.visibles.childIDs.length > 0) {
-						_this._drawVisibles(_this._tmp.visibles.childIDs[0]);
-					}
-				};
-				break;
-			case "ArrowUp":
-				if (d3.event.ctrlKey) {
-					_this.addParent(_this._view.viewData.selectedNodeID);
-				} else {
-					if (_this._tmp.visibles.parentIDs.length > 0) {
-						_this._drawVisibles(_this._tmp.visibles.parentIDs[0]);
-					}
-				};
-				break;
-			case "ArrowLeft":
-				if (d3.event.ctrlKey) {
-					_this.addFriend(_this._view.viewData.selectedNodeID);
-				} else {
-					var nodeID = _this._view.viewData.selectedNodeID;
-					if (_this._tmp.visibles.friendIDs.length > 0) {
-						var nextNodeID = _this._tmp.visibles.friendIDs.find( function(element) {
-							return element > nodeID;
-						});
-						if (nextNodeID) {
-							_this._drawVisibles(nextNodeID);
-						} else {
-							_this._drawVisibles(_this._tmp.visibles.friendIDs[0]);
+					break;
+				case "ArrowDown":
+					if (e.ctrlKey) {
+						this.addChild(this._view.viewData.selectedNodeID);
+					} else {
+						if (this._tmp.visibles.childIDs.length > 0) {
+							this._drawVisibles(this._tmp.visibles.childIDs[0]);
+						}
+					};
+					break;
+				case "ArrowUp":
+					if (e.ctrlKey) {
+						this.addParent(this._view.viewData.selectedNodeID);
+					} else {
+						if (this._tmp.visibles.parentIDs.length > 0) {
+							this._drawVisibles(this._tmp.visibles.parentIDs[0]);
 						};
 					};
-				};
-				break;
-			case "Delete":
-				var nodeID = _this._view.viewData.selectedNodeID;
-				_this.deleteNode(nodeID);
-				break;
-			default:
-				log.DEBUG(d3.event.key);
+					break;
+				case "ArrowLeft":
+					if (e.ctrlKey) {
+						this.addFriend(this._view.viewData.selectedNodeID);
+					} else {
+						var nodeID = this._view.viewData.selectedNodeID;
+						if (this._tmp.visibles.friendIDs.length > 0) {
+							var nextNodeID = this._tmp.visibles.friendIDs.find( function(element) {
+								return element > nodeID;
+							});
+							if (nextNodeID) {
+								this._drawVisibles(nextNodeID);
+							} else {
+								this._drawVisibles(this._tmp.visibles.friendIDs[0]);
+							};
+						};
+					};
+					break;
+				case "Delete":
+					var nodeID = this._view.viewData.selectedNodeID;
+					this.deleteNode(nodeID);
+					break;
+				case "s":
+					if (e.ctrlKey) {
+						// To disable browser page save.
+						e.preventDefault();
+
+						$(`#node-search-${this.datasetKey}-${this.viewKey}`).modal('show');
+					} else {
+						//
+					};
+					break;
+				case "Enter":
+					$(`#node-editor-${this.datasetKey}-${this.viewKey}`).modal('show');
+					break;
+				default:
+					log.DEBUG(e.key);
+			};
 		};
 	};
 
@@ -1172,7 +1309,7 @@ class LP_Thebrain extends LayoutPlugin {
 		log.DEBUG(`eventDragEndCircle(${this._tmp.newNode.sourceNodeID}, ${this._tmp.newNode.targetNodeID}, ${this._tmp.newNode.linkType})`);
 		if (this._tmp.newNode.targetNodeID !== null) {
 			if (this._tmp.newNode.targetNodeID === -1) {
-				$(`#search-${this.datasetKey}-${this.viewKey}`).select2("open");
+				$(`#node-search-${this.datasetKey}-${this.viewKey}`).modal('show');
 			} else {
 				this._datasetInstance.addLink(this._tmp.newNode.sourceNodeID, this._tmp.newNode.targetNodeID, this._tmp.newNode.linkType);
 				this.svgBase.select("#dragcircle").remove();
@@ -1195,7 +1332,7 @@ class LP_Thebrain extends LayoutPlugin {
 		this._tmp.newNode.targetNodeID = -1;
 		this._tmp.newNode.targetClass = null;
 		this._tmp.newNode.linkType = "child";
-		$(`#search-${this.datasetKey}-${this.viewKey}`).select2("open");
+		$(`#node-search-${this.datasetKey}-${this.viewKey}`).modal('show');
 	};
 
 	addParent(nodeID) {
@@ -1208,7 +1345,7 @@ class LP_Thebrain extends LayoutPlugin {
 		this._tmp.newNode.targetNodeID = -1;
 		this._tmp.newNode.targetClass = null;
 		this._tmp.newNode.linkType = "parent";
-		$(`#search-${this.datasetKey}-${this.viewKey}`).select2("open");
+		$(`#node-search-${this.datasetKey}-${this.viewKey}`).modal('show');
 	};
 
 	addFriend(nodeID) {
@@ -1221,7 +1358,7 @@ class LP_Thebrain extends LayoutPlugin {
 		this._tmp.newNode.targetNodeID = -1;
 		this._tmp.newNode.targetClass = null;
 		this._tmp.newNode.linkType = "friend";
-		$(`#search-${this.datasetKey}-${this.viewKey}`).select2("open");
+		$(`#node-search-${this.datasetKey}-${this.viewKey}`).modal('show');
 	};
 
 	deleteNode(nodeID) {

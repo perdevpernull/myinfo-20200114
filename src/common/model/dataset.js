@@ -484,7 +484,7 @@ class Dataset {
 
 		var keys = Object.keys(this._data.nodes).filter(function(nodeKey) {
 			// majd figyelni kell, h a deleted-ek ne szerepeljenek a listában.
-			return ((!_this._data.nodes[nodeKey].deleted) && (_this._data.nodes[nodeKey].text.toLowerCase().indexOf(searchText) !== -1));
+			return ((!_this._data.nodes[nodeKey].deleted) && (_this._data.nodes[nodeKey].text.toLowerCase().indexOf(searchText.toLowerCase()) !== -1));
 		});
 		var result = [];
 		for (var i in keys) {

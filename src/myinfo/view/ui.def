@@ -1,0 +1,57 @@
+<!-- debug-area START -->
+<div id="debug-area" class="row p-2">
+	<button type="button" class="btn btn-primary" onClick="myinfo.test()">myinfo.test()</button>
+	<button type="button" class="btn btn-primary invisible" onClick="myinfo.test2()">myinfo.test2()</button>
+	<button type="button" class="btn btn-primary" onClick="myinfo.test3()">myinfo.test3()</button>
+</div>
+<!-- debug-area END -->
+
+<!-- menu-bar START -->
+<div id="menu-bar" class="row p-2">
+	<button id="sidebar-toggler" type="button" class="btn btn-light">
+		<span class="navbar-toggler-icon">
+			<svg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'>
+				<path stroke='rgba(0, 0, 0, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'></path>
+			</svg>
+		</span>
+	</button>
+	<ul id="menu" class="nav nav-pills" role="tablist">
+		<li id="menu-home" class="nav-item">
+			<a id="ws-home-tab" class="nav-link active" data-toggle="pill" href="#ws-home" role="tab">Home</a>
+		</li>
+	{{##def.uiAddMenu:
+		<!-- "menu-{{=it.datasetKey}} START -->
+		<li id="menu-{{=it.datasetKey}}" class="nav-item">
+			<a id="ws-{{=it.datasetKey}}-tab" class="nav-link" data-toggle="pill" href="#ws-{{=it.datasetKey}}" role="tab">{{= it.menuTitle || undefined}}</a>
+		</li>
+		<!-- "menu-{{=it.datasetKey}} END -->
+	#}}
+	<!--? it.generateEmpty x-->
+		<!--#def.uiAddMenu x-->
+	<!--? x-->
+	</ul>
+</div>
+<!-- menu-bar END -->
+
+<!-- ws-content START -->
+<div id="ws-content" class="tab-content">
+	<div id="ws-home" class="tab-pane fade show active" role="tabpanel" aria-labelledby="ws-home-tab">
+		<!-- UIHome installs itself here -->
+		<!--? it.generateEmpty x-->
+			<!--#def.uiHomeControl x-->
+		<!--? x-->
+	</div>
+{{##def.uiAddWs:
+	<!-- "ws-{{=it.datasetKey}} START -->
+	<div id="ws-{{=it.datasetKey}}" class="h-100 tab-pane fade" role="tabpanel" aria-labelledby="ws-{{=it.datasetKey}}-tab">
+	<!--? it.generateEmpty x-->
+		Layout content comes here.
+	<!--? x-->
+	</div>
+	<!-- "ws-{{=it.datasetKey}} END -->
+#}}
+<!--? it.generateEmpty x-->
+	<!--#def.uiAddWs x-->
+<!--? x-->
+</div>
+<!-- ws-content END -->

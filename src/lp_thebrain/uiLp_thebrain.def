@@ -1,0 +1,96 @@
+<!-- node-editor-{{=it.datasetKey}}-{{=it.viewKey}} START -->
+<div id="node-editor-{{=it.datasetKey}}-{{=it.viewKey}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="node-editorLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 id="node-editor-{{=it.datasetKey}}-{{=it.viewKey}}-title" class="modal-title">Edit node's text (ID_here)</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form id="node-editor-{{=it.datasetKey}}-{{=it.viewKey}}-form">
+					<div class="form-group">
+						<input id="node-editor-{{=it.datasetKey}}-{{=it.viewKey}}-nodeID" type="text" class="form-control" hidden>
+<!--
+						<label for="node-editor-{{=it.datasetKey}}-{{=it.viewKey}}-nodeText" class="form-control-label">Text:</label>
+-->
+						<input id="node-editor-{{=it.datasetKey}}-{{=it.viewKey}}-nodeText" type="text" class="form-control">
+						<button id="node-editor-{{=it.datasetKey}}-{{=it.viewKey}}-save" type="submit" class="btn btn-primary" data-dismiss="modal" hidden>Save</button>
+					</div>
+				</form>
+			</div>
+<!--
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+				<button id="node-editor-{{=it.datasetKey}}-{{=it.viewKey}}-save2" type="button" class="btn btn-primary" data-dismiss="modal">Save2</button>
+			</div>
+-->
+		</div>
+	</div>
+</div>
+<!-- node-editor-{{=it.datasetKey}}-{{=it.viewKey}} END -->
+
+<!-- node-search-{{=it.datasetKey}}-{{=it.viewKey}} START -->
+<div id="node-search-{{=it.datasetKey}}-{{=it.viewKey}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="node-searchLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 id="node-search-{{=it.datasetKey}}-{{=it.viewKey}}-title" class="modal-title">Search or Insert</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="form-group">
+<!--
+						<label for="node-search-{{=it.datasetKey}}-{{=it.viewKey}}-nodeText" class="form-control-label">Node text</label>
+-->
+						<select id="node-search-{{=it.datasetKey}}-{{=it.viewKey}}-nodeText" class="form-control" style="width: 100%;">
+						</select>
+					</div>
+				</form>
+			</div>
+<!--
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+				<button id="node-search-{{=it.datasetKey}}-{{=it.viewKey}}-save" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+			</div>
+-->
+		</div>
+	</div>
+</div>
+<!-- node-search-{{=it.datasetKey}}-{{=it.viewKey}} END -->
+
+<!-- lp_thebrain-{{=it.datasetKey}}-{{=it.viewKey}} START -->
+<div id="lp_thebrain-{{=it.datasetKey}}-{{=it.viewKey}}">
+	<div id="drawingarea-{{=it.datasetKey}}-{{=it.viewKey}}">
+		<svg id="svg-{{=it.datasetKey}}-{{=it.viewKey}}" style="width: {{=it.width}}px; height: {{=it.height}}px; stroke: black; stroke-width: 1; border: 1px solid black;" onselectstart="event.preventDefault();">
+			<g id="svgBase-{{=it.datasetKey}}-{{=it.viewKey}}">
+				<g id="svgPlaceholder-{{=it.datasetKey}}-{{=it.viewKey}}" transform="translate({{=it.placeholder_x}},{{=it.placeholder_y}})">
+					<polygon id="placeholder-{{=it.datasetKey}}-{{=it.viewKey}}"
+						points="{{=0*it.placeholderZoomPercent}},{{=-100*it.placeholderZoomPercent}} 
+							{{=-97*it.placeholderZoomPercent}},{{=22*it.placeholderZoomPercent}} 
+							{{=43*it.placeholderZoomPercent}},{{=90*it.placeholderZoomPercent}} 
+							{{=78*it.placeholderZoomPercent}},{{=-62*it.placeholderZoomPercent}} 
+							{{=-78*it.placeholderZoomPercent}},{{=-62*it.placeholderZoomPercent}} 
+							{{=-43*it.placeholderZoomPercent}},{{=90*it.placeholderZoomPercent}} 
+							{{=97*it.placeholderZoomPercent}},{{=22*it.placeholderZoomPercent}}"
+					style="fill: lime; fill-rule: evenodd; stroke: purple; stroke-width: 3; opacity: 0.3;" >
+						<animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 0 0" to="360 0 0" dur="7s" repeatCount="indefinite" />
+					</polygon>
+				</g>
+				<g id="svgLinks-{{=it.datasetKey}}-{{=it.viewKey}}"></g>
+				<g id="svgNodes-{{=it.datasetKey}}-{{=it.viewKey}}"></g>
+				<g id="svgPins-{{=it.datasetKey}}-{{=it.viewKey}}"></g>
+				<g id="svgHistory-{{=it.datasetKey}}-{{=it.viewKey}}"></g>
+			</g>
+		</svg>
+	</div>
+	<div id="notearea-{{=it.datasetKey}}-{{=it.viewKey}}" >
+		<textarea id="note-{{=it.datasetKey}}-{{=it.viewKey}}" style="width: 100%; height: 100px;"></textarea>
+	</div>
+</div>
+<!-- lp_thebrain-{{=it.datasetKey}}-{{=it.viewKey}} END -->
+	
