@@ -6,10 +6,19 @@ module.exports = function apiDataset(req, res, next) {
         case "v1":
             switch (req.method) {
                 case "GET":
-                    // ToDo: put base_dir into some config file.
-                    var files = fs.readdirSync(base_dir+"/"+req.session.userID+"/"+req.query.name).sort().reverse();
-
-                    res.sendFile(base_dir+"/"+req.session.userID+"/"+req.query.name+"/"+files[0]);
+					// ToDo: put base_dir into some config file.
+					if (fs.existsSync(base_dir+"/"+req.session.userID+"/"+req.query.name)) {
+						var files = fs.readdirSync(base_dir+"/"+req.session.userID+"/"+req.query.name).sort().reverse();
+						if (files.length > 0) {
+							res.sendFile(base_dir+"/"+req.session.userID+"/"+req.query.name+"/"+files[0]);
+						} else {
+							res.send("{}");
+						}
+						
+					} else {
+						fs.mkdirSync(base_dir+"/"+req.session.userID+"/"+req.query.name);
+						res.send("{}");
+					};
                     console.log(`dataset: GET`);
                     break;
                 case "POST":

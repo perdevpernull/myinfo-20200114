@@ -4,7 +4,7 @@ var undefined;
 
 class Dataset {
 	constructor(jsonData) {
-		if (jsonData === undefined) {
+		if ((jsonData === undefined) || (jsonData.nextNodeID === undefined)) {
 			this._data = {
 				nextNodeID: 2,
 				nodes: {

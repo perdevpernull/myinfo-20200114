@@ -89,7 +89,9 @@ class MyInfo {
 		if (datasetKey === "OpenNew") {
 			// ToDo: meg kell írni.
 		} else if (datasetKey === "CreateNew") {
-			// ToDo: meg kell írni.
+			var datasetKey = _this.userData.addDataset(`Dataset${_this.userData._data.nextDatasetID}`, `This is the descripton for Dataset${_this.userData._data.nextDatasetID}.`);
+			_this.saveUserData();
+			_this.refreshHome();
 		} else {
 			var dataset = _this.userData.getDataset(datasetKey);
 			if (dataset) {

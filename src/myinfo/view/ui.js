@@ -79,7 +79,7 @@ class UIHome {
 				datasetDescription: datasets[datasetKey].description
 			});
 			for (var viewKey in datasets[datasetKey].views) {
-				primary = ((datasets[datasetKey].selectedViewIndex === datasets[datasetKey].views[viewKey].ID) ? "btn-primary" : "btn-light");
+				primary = ((datasets[datasetKey].selectedViewIndex === datasets[datasetKey].views[viewKey].ID) ? "btn-primary" : "btn-secondary");
 				str += uiHomeCardViewsHtml({
 					datasetKey: datasetKey,
 					open: open,

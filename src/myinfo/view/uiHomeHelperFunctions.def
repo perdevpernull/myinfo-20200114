@@ -76,7 +76,7 @@
 		<div class="card-body">
 			<div class="d-flex justify-content-between">
 				<h4 class="card-title">{{=it.datasetTitle}}</h4>
-				<button type="button" class="btn btn-light {{=it.open}}" data-toggle="modal" data-target="#dataset-editor" data-key="{{=it.datasetKey}}" data-title="{{=it.datasetTitle}}" data-description="{{=it.datasetDescription}}" {{=it.open}}>Edit</button>
+				<button type="button" class="btn btn-secondary {{=it.open}}" data-toggle="modal" data-target="#dataset-editor" data-key="{{=it.datasetKey}}" data-title="{{=it.datasetTitle}}" data-description="{{=it.datasetDescription}}" {{=it.open}}>Edit</button>
 			</div>
 			<p class="card-text">{{=it.datasetDescription}}</p>
 		</div>
@@ -115,8 +115,8 @@
 		</div>
 		<div class="card-footer bg-white">
 			<div class="d-flex justify-content-between">
-				<button type="button" class="btn btn-light" onClick="myinfo.openDataset('OpenNew')">Open new</button>
-				<button type="button" class="btn btn-light" onClick="myinfo.openDataset('CreateNew')">Create new</button>
+				<button type="button" class="btn btn-secondary" onClick="myinfo.openDataset('OpenNew')" disabled>Open new</button>
+				<button type="button" class="btn btn-secondary" onClick="myinfo.openDataset('CreateNew')">Create new</button>
 			</div>
 		</div>
 	</div>
