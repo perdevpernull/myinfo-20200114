@@ -49,7 +49,7 @@ class MyInfo {
 				});
 			});
 		} else {
-			log.ERROR("Settings is already created (singleton)");
+			log.ERROR("MyInfo is already created (singleton)");
 		};
 	};
 
@@ -117,7 +117,7 @@ class MyInfo {
 						_this.userData.setDatasetTabIndex(datasetKey, tabIndex);
 	
 						//lp_instance.constructLayout($(_this.mainDomID).width(),$(_this.mainDomID).height() - 100);
-						var heightOfOthers = $("#debug-area").outerHeight(true) + $("#menu-bar").outerHeight(true);
+						var heightOfOthers = $("#menu-bar").outerHeight(true);
 						lp_instance.constructLayout($(window).width(), $(window).outerHeight(true) - heightOfOthers);
 						
 						// Időt kell hagyni az új tab megjelenésének (mert amíg nem jelent meg teljesen, addig a getBBox() fv nem működik.)
@@ -158,13 +158,6 @@ class MyInfo {
 	
 	registerLayoutPlugin(layoutPluginKey, layoutPluginClass) {
 		_this.settings.registerLayoutPlugin(layoutPluginKey, layoutPluginClass);
-	};
-	
-	test() {
-		log.DEBUG("test() START");
-		//this.saveDataset("ID1");
-		var tmp = this.userData.getDatasetInstance("ID1").findOrphanNodeIDs();
-		log.DEBUG("test() END");
 	};
 };
 

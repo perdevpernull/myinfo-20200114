@@ -1118,6 +1118,10 @@ class LP_Thebrain extends LayoutPlugin {
 		};
 	};
 
+	eventListenerButton(uiElement) {
+		$(`#node-leftmenu-${this.datasetKey}-${this.viewKey}`).modal("show");
+	};
+
 	_eventMouseenterNode(nodeID, node) {
 		var nodes = this.svgBase.selectAll(`#node_${nodeID}`);
 		nodes.select(".rectangle")

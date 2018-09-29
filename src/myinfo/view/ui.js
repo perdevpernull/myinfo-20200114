@@ -113,8 +113,7 @@ class UI {
 			myinfo.refreshHome();
 		});
 		$("#sidebar-toggler").click( function() {
-			log.INFO("Helló-belló2!");
-			myinfo.refreshHome();
+			myinfo.ui.eventListenerButton(this);
 		});
 
 		$(window).resize( function() {
@@ -138,9 +137,17 @@ class UI {
 		};
 	};
 
+	eventListenerButton(uiElement) {
+		log.ERROR("eventListenerButton: ToDo befejezni!");
+		// ToDo: Meg kell oldani, h majd csak az aktuálisnak küldjük el az eventet és ne az összesnek!
+		for (var datasetKey in this.tabs) {
+			this.tabs[datasetKey].layoutPluginInstance.eventListenerButton(uiElement);
+		};
+	};
+
 	resize(newWidth, newHeight) {
 		log.INFO(`Resize (${newWidth},${newHeight})`);
-		var heightOfOthers = $("#debug-area").outerHeight(true) + $("#menu-bar").outerHeight(true);
+		var heightOfOthers = $("#menu-bar").outerHeight(true);
 		log.INFO(`Resize heightOfOthers(${heightOfOthers})`);
 		for (var datasetKey in this.tabs) {
 			this.tabs[datasetKey].layoutPluginInstance.resizeLayout(newWidth, newHeight - heightOfOthers);
