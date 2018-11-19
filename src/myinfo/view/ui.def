@@ -12,11 +12,11 @@
 			<a id="ws-home-tab" class="nav-link active" data-toggle="pill" href="#ws-home" role="tab">Home</a>
 		</li>
 	{{##def.uiAddMenu:
-		<!-- "menu-{{=it.datasetKey}} START -->
-		<li id="menu-{{=it.datasetKey}}" class="nav-item">
-			<a id="ws-{{=it.datasetKey}}-tab" class="nav-link" data-toggle="pill" href="#ws-{{=it.datasetKey}}" role="tab">{{= it.menuTitle || undefined}}</a>
+		<!-- "menu-{{=it.datasetKey}}-{{=it.viewKey}} START -->
+		<li id="menu-{{=it.datasetKey}}-{{=it.viewKey}}" class="nav-item">
+			<a id="ws-{{=it.datasetKey}}-{{=it.viewKey}}-tab" class="nav-link" data-toggle="pill" href="#ws-{{=it.datasetKey}}-{{=it.viewKey}}" role="tab">{{= it.menuTitle || undefined}}</a>
 		</li>
-		<!-- "menu-{{=it.datasetKey}} END -->
+		<!-- "menu-{{=it.datasetKey}}-{{=it.viewKey}} END -->
 	#}}
 	<!--? it.generateEmpty x-->
 		<!--#def.uiAddMenu x-->
@@ -34,13 +34,13 @@
 		<!--? x-->
 	</div>
 {{##def.uiAddWs:
-	<!-- "ws-{{=it.datasetKey}} START -->
-	<div id="ws-{{=it.datasetKey}}" class="h-100 tab-pane fade" role="tabpanel" aria-labelledby="ws-{{=it.datasetKey}}-tab">
+	<!-- "ws-{{=it.datasetKey}}-{{=it.viewKey}} START -->
+	<div id="ws-{{=it.datasetKey}}-{{=it.viewKey}}" class="h-100 tab-pane fade" role="tabpanel" aria-labelledby="ws-{{=it.datasetKey}}-{{=it.viewKey}}-tab">
 	<!--? it.generateEmpty x-->
 		Layout content comes here.
 	<!--? x-->
 	</div>
-	<!-- "ws-{{=it.datasetKey}} END -->
+	<!-- "ws-{{=it.datasetKey}}-{{=it.viewKey}} END -->
 #}}
 <!--? it.generateEmpty x-->
 	<!--#def.uiAddWs x-->

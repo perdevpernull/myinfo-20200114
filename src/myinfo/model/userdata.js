@@ -85,7 +85,7 @@ class UserData {
 		log.DEBUG(`UserData.getDatasetInstance(${datasetKey})`);
 		log.logdec();
 		if (!this._dataTmp.datasets[datasetKey]) {
-			this._dataTmp.datasets[datasetKey] = {instance: null, views: {}, tabIndex: null};
+			this._dataTmp.datasets[datasetKey] = {instance: null, views: {}};
 		};
 		return this._dataTmp.datasets[datasetKey].instance;
 	};
@@ -121,7 +121,7 @@ class UserData {
 		var view = this.getView(datasetKey, viewKey);
 		if (view) {
 			if (!this._dataTmp.datasets[datasetKey]) {
-				this._dataTmp.datasets[datasetKey] = {instance: null, views: {}, tabIndex: null};
+				this._dataTmp.datasets[datasetKey] = {instance: null, views: {}};
 			};
 			if (!this._dataTmp.datasets[datasetKey].views[`ID${view.ID}`]) {
 				this._dataTmp.datasets[datasetKey].views[`ID${view.ID}`] = {instance: null};
@@ -129,21 +129,6 @@ class UserData {
 			instance = this._dataTmp.datasets[datasetKey].views[`ID${view.ID}`].instance;
 		};
 		return instance;
-	};
-
-	setDatasetTabIndex(datasetKey, tabIndex) {
-		if (!this.getDatasetTabIndex(datasetKey)) {
-			this._dataTmp.datasets[datasetKey].tabIndex = tabIndex;
-		} else {
-			log.ERROR(`UserData.setDatasetTabIndex(${datasetKey},${tabIndex}).ERROR(${this._dataTmp.datasets[datasetKey].tabIndex})`);
-		};
-	};
-
-	getDatasetTabIndex(datasetKey) {
-		if (!this._dataTmp.datasets[datasetKey]) {
-			this._dataTmp.datasets[datasetKey] = {instance: null, views: {}, tabIndex: null};
-		};
-		return this._dataTmp.datasets[datasetKey].tabIndex;
 	};
 };
 

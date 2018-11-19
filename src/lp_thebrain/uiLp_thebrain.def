@@ -74,7 +74,7 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				Here comes the modal-body!
+				<button id="node-leftmenu-{{=it.datasetKey}}-{{=it.viewKey}}-save" type="button" class="btn btn-primary" data-dismiss="modal" onClick="myinfo.saveDataset('{{=it.datasetKey}}')">Save dataset {{=it.datasetKey}}-{{=it.viewKey}}</button>
 			</div>
 		</div>
 	</div>

@@ -5,9 +5,8 @@ import {uiHtml, uiAddMenuHtml, uiAddWsHtml, uiHomeControlHtml, uiHomeCardHeaderH
 
 
 class UIHome {
-	constructor(domID) {
-
-		$(domID).append(uiHomeControlHtml({generateEmplty: false}));
+	constructor() {
+		$("#ws-home").append(uiHomeControlHtml({generateEmplty: false}));
 
 		// Modal window: Edit
 		autosize($("#dataset-description"));
@@ -64,13 +63,18 @@ class UIHome {
 			log.INFO("Deleted");
 			myinfo.refreshHome();
 		});
+
+		$(`#ws-home-tab`).on("show.bs.tab", function (event) {
+			myinfo.ui.activeTab = "home";
+		});
 	};
 
-	refresh(datasets) {
+	refreshLayout(datasets) {
 		var str, primary, open;
 		$("#ws-home-list").empty();
 		for (var datasetKey in datasets) {
-			open = (datasets[datasetKey].open ? "invisible": "");
+			//open = (datasets[datasetKey].open ? "invisible": "");
+			open = ( (myinfo.userData.getDatasetInstance(datasetKey) === null) ? "": "invisible");
 			str = uiHomeCardHeaderHtml({
 				datasetKey: datasetKey,
 				imgSrc: datasets[datasetKey].imgSrc,
@@ -98,20 +102,35 @@ class UIHome {
 		str = uiHomeNewCardHtml();
 		$("#ws-home-list").append(str);
 	};
+
+	resizeLayout() {
+		// Deliberately do nothing.
+	};
+
+	eventListenerKeydown() {
+		// Deliberately do nothing.
+	};
+
+	eventListenerButton() {
+		$(`#home-leftmenu`).modal("show");
+	};
 };
 
 class UI {
 	constructor(domID) {
-		var str = uiHtml({generateEmplty: false});
-		$(domID).append(str);
+		this.domID = domID;
+		this.tabs = {};
+		this.tabsLength = 0;
+		this.activeTab = "";
 
-		this.home = new UIHome("#ws-home");
+		$(domID).append(uiHtml({generateEmplty: false}));
 
-		// ToDo: Átnézendő.
-		$("#ws-home-tab").on("show.bs.pill", function (e) {
-			log.INFO("Helló-belló!");
-			myinfo.refreshHome();
-		});
+		this.tabs["home"] = {
+			uiComponent: new UIHome()
+		};
+		this.tabsLength += 1;
+		this.activeTab = "home";
+
 		$("#sidebar-toggler").click( function() {
 			myinfo.ui.eventListenerButton(this);
 		});
@@ -120,79 +139,69 @@ class UI {
 			myinfo.ui.resize( $(window).width(), $(window).outerHeight(true));
 		});
 
-		this.mainDomID = domID;
-		this.tabs = {};
-		this.selectedTab = 0;
-
 		$("body").on("keydown", function(e) {
 			myinfo.ui.eventListenerKeydown(e);
 		});
 	};
 
 	eventListenerKeydown(e) {
-		console.log(e.key);
-		// ToDo: Meg kell oldani, h majd csak az aktuálisnak küldjük el az eventet és ne az összesnek!
-		for (var datasetKey in this.tabs) {
-			this.tabs[datasetKey].layoutPluginInstance.eventListenerKeydown(e);
-		};
+		this.tabs[this.activeTab].uiComponent.eventListenerKeydown(e);
 	};
 
 	eventListenerButton(uiElement) {
-		log.ERROR("eventListenerButton: ToDo befejezni!");
-		// ToDo: Meg kell oldani, h majd csak az aktuálisnak küldjük el az eventet és ne az összesnek!
-		for (var datasetKey in this.tabs) {
-			this.tabs[datasetKey].layoutPluginInstance.eventListenerButton(uiElement);
-		};
+		this.tabs[this.activeTab].uiComponent.eventListenerButton(uiElement);
 	};
 
 	resize(newWidth, newHeight) {
-		log.INFO(`Resize (${newWidth},${newHeight})`);
 		var heightOfOthers = $("#menu-bar").outerHeight(true);
-		log.INFO(`Resize heightOfOthers(${heightOfOthers})`);
 		for (var datasetKey in this.tabs) {
-			this.tabs[datasetKey].layoutPluginInstance.resizeLayout(newWidth, newHeight - heightOfOthers);
+			this.tabs[datasetKey].uiComponent.resizeLayout(newWidth, newHeight - heightOfOthers);
 		};
 	};
 
 	refreshHome(datasets) {
-		this.home.refresh(datasets);
+		this.tabs["home"].uiComponent.refreshLayout(datasets);
 	};
 
-	addMenuAndWs(datasetKey, menuTitle, lp_instance) {
-		this.tabs[datasetKey] = {layoutPluginInstance: lp_instance};
+	addMenuAndWs(datasetKey, viewKey, menuTitle, lp_instance) {
+		var tabKey = datasetKey + "-" + viewKey;
+		this.tabs[tabKey] = {uiComponent: lp_instance};
 
 		var str = uiAddMenuHtml({
 			datasetKey: datasetKey,
+			viewKey: viewKey,
 			menuTitle: menuTitle
 		});
 		$("#menu").append(str);
 
-		var index = $("#menu li").length - 1;
-		this.selectedTab = index;
-
 		str = uiAddWsHtml({
-			datasetKey: datasetKey
+			datasetKey: datasetKey,
+			viewKey: viewKey
 		});
 		$("#ws-content").append(str);
-		/*$(`#ws-${datasetKey}-tab`).on("shown.bs.tab", function (event) {
-			//$(event.target);
-			//$(event.relatedTarget);
-			alert("shown.bs.tab");
-			lp_instance.refreshLayout();
-		});*/
+
+		$(`#ws-${tabKey}-tab`).on("show.bs.tab", function (event) {
+			myinfo.ui.activeTab = tabKey;
+		});
 
 		// Activate the newly added tab
-		this.activateMenuAndWs(index);
-
-		return index;
+		this.activateMenuAndWs(tabKey);
 	};
 
-	activateMenuAndWs(index) {
-		$(`#menu li:eq(${index}) a`).tab('show');
-		this.selectedTab = index;
+	activateMenuAndWs(tabKey) {
+		$(`#ws-${tabKey}-tab`).tab('show');
 	};
 
-	deleteMenuAndWs(datasetKey) {
+	isMenuAndWs(tabKey) {
+		var retval = true;
+		if (!this.tabs[tabKey]) {
+			retval = false;
+		};
+		return retval;
+	};
+
+	deleteMenuAndWs(tabKey) {
+		// ToDo: Megcsinálni rendesen
 		//$(`#menu-${datasetID}`).remove();
 		//$(`#ws-${datasetID}`).remove();
 	};

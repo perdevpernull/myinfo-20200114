@@ -28,6 +28,10 @@ class LayoutPlugin {
 	eventListenerKeydown() {
 		log.ERROR("LayoutPlugin.eventListenerKeydown()");
 	};
+
+	eventListenerButton() {
+		log.ERROR("LayoutPlugin.eventListenerButton()");
+	};
 };
 
 export {LayoutPlugin};

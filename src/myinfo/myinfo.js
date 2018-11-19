@@ -95,16 +95,19 @@ class MyInfo {
 		} else {
 			var dataset = _this.userData.getDataset(datasetKey);
 			if (dataset) {
-				if (!_this.userData.getDatasetTabIndex(datasetKey)) {
+				// If viewKey is null we get the default viewKey
+				var view = _this.userData.getView(datasetKey, viewKey);
+				viewKey = "ID"+view.ID;
+				if (!_this.ui.isMenuAndWs(datasetKey + "-" + viewKey)) {
 					loadJson(dataset.link)
 					.then( function(json) {
 						log.INFO(`${dataset.link} loaded`);
-	
-						var datasetInstance = new Dataset(json);
-						_this.userData.setDatasetInstance(datasetKey, datasetInstance);
-	
-						var view = _this.userData.getView(datasetKey, viewKey);
-						viewKey = "ID"+view.ID;
+
+						var datasetInstance = _this.userData.getDatasetInstance(datasetKey);
+						if ( datasetInstance === null) {
+							datasetInstance = new Dataset(json);
+							_this.userData.setDatasetInstance(datasetKey, datasetInstance);
+						}
 	
 						var lp_instance = _this.userData.getLayoutPluginInstance(datasetKey, viewKey);
 						if (!lp_instance) {
@@ -113,8 +116,7 @@ class MyInfo {
 							_this.userData.setLayoutPluginInstance(datasetKey, viewKey, lp_instance);
 						};
 
-						var tabIndex = _this.ui.addMenuAndWs(datasetKey, `${dataset.title}:${view.title}`, lp_instance);
-						_this.userData.setDatasetTabIndex(datasetKey, tabIndex);
+						_this.ui.addMenuAndWs(datasetKey, viewKey, `${dataset.title}:${view.title}`, lp_instance);
 	
 						//lp_instance.constructLayout($(_this.mainDomID).width(),$(_this.mainDomID).height() - 100);
 						var heightOfOthers = $("#menu-bar").outerHeight(true);
@@ -126,7 +128,7 @@ class MyInfo {
 						_this.ui.refreshHome(_this.userData.getDatasets());
 					});
 				} else {
-					_this.ui.activateMenuAndWs(dataset.tabIndex);
+					_this.ui.activateMenuAndWs(datasetKey + "-" + viewKey);
 					log.DEBUG("Already open");
 				};
 			} else {

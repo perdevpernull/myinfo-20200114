@@ -19,7 +19,9 @@ app.use(session({
   	saveUninitialized: true,
     secret: 'mysecret'
 }));
-app.use(bodyParser());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+
 app.all("/*", function(req, res, next) {
 	if (req.session.userID) {
 		console.log(`Already logged in: req.session.userID: ${req.session.userID} (${JSON.stringify(req.params)})`);

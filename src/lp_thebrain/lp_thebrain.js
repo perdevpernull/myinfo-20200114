@@ -24,7 +24,8 @@ class LP_Thebrain extends LayoutPlugin {
 			nodes: {},
 			historyIDs: [],
 			viewMode: "normal",
-			focus: "svg",
+			focus: "svg-node",
+			selectedLink: {sourceNodeID: null, targetNodeID: null, type: null},
 			newNode: {linkType: "", sourceClass: null, sourceNodeID: null, targetClass: null, targetNodeID: null},
 		};
 		log.loginc();
@@ -44,7 +45,7 @@ class LP_Thebrain extends LayoutPlugin {
 		var _this = this;
 		var str;
 
-		this._setZones(width - 30, height - 6 - 107);
+		this._setZones(width - 30, height - 6 - 106);
 
 		var placeholderZoomPercent = 33/100;
 		str = uiLp_thebrainHtml({
@@ -56,7 +57,7 @@ class LP_Thebrain extends LayoutPlugin {
 			placeholder_y: this._placeholder.y,
 			placeholderZoomPercent: placeholderZoomPercent
 		});
-		$(`#ws-${this.datasetKey}`).append(str);
+		$(`#ws-${this.datasetKey}-${this.viewKey}`).append(str);
 
 		this.svg = d3.select(`#svg-${this.datasetKey}-${this.viewKey}`);	
 		this.svgBase = d3.select(`#svgBase-${this.datasetKey}-${this.viewKey}`);
@@ -91,7 +92,7 @@ class LP_Thebrain extends LayoutPlugin {
 		});
 
 		$(`#node-editor-${this.datasetKey}-${this.viewKey}`).on("hidden.bs.modal", function () {
-			_this._tmp.focus = "svg";
+			_this._tmp.focus = "svg-node";
 		});
 
 		// Node-search section
@@ -220,7 +221,7 @@ class LP_Thebrain extends LayoutPlugin {
 		});
 
 		$(`#node-search-${this.datasetKey}-${this.viewKey}`).on("hidden.bs.modal", function () {
-			_this._tmp.focus = "svg";
+			_this._tmp.focus = "svg-node";
 		});
 
 
@@ -234,16 +235,10 @@ class LP_Thebrain extends LayoutPlugin {
 	resizeLayout(width, height) {
 		log.DEBUG(`LP_Thebrain.resizeLayout(${width},${height})`);
 		var datasetKeyAndViewKey = `${this.datasetKey}-${this.viewKey}`;
-		log.DEBUG(`LP_Thebrain.resizeLayout searchdiv(${$(`#searchdiv-${datasetKeyAndViewKey}`).outerHeight(true)})`);
-		// ToDo: Ez miért nem működik?
-		//var tmp2 = $(`notearea-${datasetKeyAndViewKey}`).outerHeight(true);
-		var tmp2 = 107;
-
-		log.DEBUG(`LP_Thebrain.resizeLayout notearea(${$(`notearea-${datasetKeyAndViewKey}`).outerHeight(true)})`);
+		
 		d3.select(`#svg-${datasetKeyAndViewKey}`)
 			.style("width", width - 30)
-			//.style("height", height - $(`#searchdiv-${datasetKeyAndViewKey}`).outerHeight(true) - 6 - $(`notearea-${datasetKeyAndViewKey}`).outerHeight(true));
-			.style("height", height - $(`#searchdiv-${datasetKeyAndViewKey}`).outerHeight(true) - 6 - tmp2);
+			.style("height", height - $(`#notearea-${datasetKeyAndViewKey}`).outerHeight(true) - 6);
 
 		this._setZones($(`#svg-${datasetKeyAndViewKey}`).width(),$(`#svg-${datasetKeyAndViewKey}`).height());
 		this._drawVisibles(this._view.viewData.selectedNodeID);
@@ -926,6 +921,8 @@ class LP_Thebrain extends LayoutPlugin {
 						.style("stroke", "#f77")
 						//.style("stroke-dasharray", ("10, 10"))
 					;
+					_this._tmp.focus = "svg-link";
+					_this._tmp.selectedLink = {sourceNodeID: d.source, targetNodeID: d.target, type: d.type};
 				};
 			})
 			.on("mouseleave", function(d) {
@@ -936,6 +933,8 @@ class LP_Thebrain extends LayoutPlugin {
 						//.style("stroke-dasharray", "none")
 					;
 				};
+				_this._tmp.focus = "svg-node";
+				_this._tmp.selectedLink = {sourceNodeID: null, targetNodeID: null, type: null};
 			})
 		;
 	};
@@ -1041,7 +1040,20 @@ class LP_Thebrain extends LayoutPlugin {
 			// Events for modal #node-search-
 		} else if (this._tmp.focus === "editor") {
 			// Events for modal #node-editor-
-		} else if (this._tmp.focus === "svg") {
+		} else if (this._tmp.focus === "svg-link") {
+			switch (e.key) {
+				case "Delete":
+					if (e.ctrlKey) {
+						//
+					} else {
+						// delete the link
+						this.deleteLink(this._tmp.selectedLink.sourceNodeID, this._tmp.selectedLink.targetNodeID, this._tmp.selectedLink.type);
+					}
+					break;
+				default:
+					//
+			}
+		} else if (this._tmp.focus === "svg-node") {
 			switch (e.key) {
 				case "ArrowRight":
 					if (e.ctrlKey) {
@@ -1101,7 +1113,7 @@ class LP_Thebrain extends LayoutPlugin {
 					break;
 				case "f":
 					if (e.ctrlKey) {
-						// To disable browser page save.
+						// To disable browser default action.
 						e.preventDefault();
 
 						$(`#node-search-${this.datasetKey}-${this.viewKey}`).modal('show');
@@ -1393,6 +1405,13 @@ class LP_Thebrain extends LayoutPlugin {
 			datasetInstance.deleteNode(nodeID);
 			this._drawVisibles(newSelectedID);
 		};
+	};
+
+	deleteLink(sourceNodeID, targetNodeID, type) {
+		this._datasetInstance.purgeLink(sourceNodeID, targetNodeID, type);
+		this._drawVisibles(0);
+		this._tmp.focus = "svg-node";
+		this._tmp.selectedLink = {sourceNodeID: null, targetNodeID: null, type: null};
 	};
 };
 
