@@ -11,10 +11,10 @@ module.exports = {
     },
     devtool: 'inline-source-map',
     devServer: {
-        contentBase: path.resolve(__dirname, 'dist')
+        contentBase: path.resolve(__dirname, 'public')
     },
     plugins: [
-        new CleanWebpackPlugin(['dist']),
+        //new CleanWebpackPlugin(['dist']),
         new HtmlWebpackPlugin({
             template: './src/myinfo/view/template.myinfo.html',
             title: 'myInfo PROD PAGE - mindmap, thebrain',
@@ -25,7 +25,7 @@ module.exports = {
     ],
     output: {
         filename: '[name].js',
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'public'),
         publicPath: '/'
 	},
     module: {
